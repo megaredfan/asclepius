@@ -45,9 +45,6 @@ Temporary Items
 
 /asclepius/.classpath
 /asclepius/.project
-/asclepius/.settings/org.eclipse.core.resources.prefs
-/asclepius/.settings/org.eclipse.jdt.core.prefs
-/asclepius/.settings/org.eclipse.m2e.core.prefs
-
+/asclepius/.settings/
 /asclepius/target
 /target/
