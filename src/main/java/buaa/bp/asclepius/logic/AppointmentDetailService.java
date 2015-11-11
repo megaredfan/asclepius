@@ -9,7 +9,7 @@ import buaa.bp.asclepius.model.Appointment;
 import buaa.bp.asclepius.model.AppointmentDetail;
 
 @Service
-public class AppointmentDeatilService {
+public class AppointmentDetailService {
 
 	@Resource(name="appointmentDetailMapper")
 	private AppointmentDetailMapper appointmentDetailMapper;
