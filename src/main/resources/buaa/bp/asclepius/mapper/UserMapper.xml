@@ -10,7 +10,8 @@
 		<result property="lastLogin" column="lastlogin" />
 		<result property="idNo" column="idno" />
 		<result property="sex" column="sex" />
-		<result property="name" column="name" />
+		<result property="userName" column="userName" />
+		<result property="realName" column="realname" />
 		<result property="creditLevel" column="creditlevel" />
 	</resultMap>
 	
@@ -27,13 +28,13 @@
 	</select>
 	<insert id="createUser" parameterType="buaa.bp.asclepius.model.User">
 	    <![CDATA[
-	    	insert into user(id,password,regtime,lastlogin,idno,sex,name,creditlevel)
-	    		values(#{id},#{password},#{registerTime},#{lastLogin},#{idNo},#{sex},#{name},#{creditLevel});
+	    	insert into user(id,password,regtime,lastlogin,idno,sex,username,realname,creditlevel)
+	    		values(#{id},#{password},#{registerTime},#{lastLogin},#{idNo},#{sex},#{userName},#{realName},#{creditLevel});
 		]]>
 	</insert>
 	<update id="updateUser" parameterType="buaa.bp.asclepius.model.User">
 		<![CDATA[
-	    	update user set password=#{password},regtime=#{registerTime},lastlogin=#{lastLogin},idno=#{idNo},sex=#{sex},name=#{name},creditlevel=#{creditLevel}
+	    	update user set password=#{password},regtime=#{registerTime},lastlogin=#{lastLogin},idno=#{idNo},sex=#{sex},username=#{userName},realname=#{realName},creditlevel=#{creditLevel}
 	    		where id=#{id};
 		]]>
 	</update>

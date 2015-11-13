@@ -14,6 +14,10 @@
 		<mvc:annotation-driven />
     	<context:component-scan base-package="buaa.bp.asclepius.servlet" />
     	
+    	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    		 <property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
+    	</bean>
+ 		
  		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"     
         p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" />
 </beans>

@@ -34,11 +34,11 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>classpath*:spring-web-mvc-servlet.xml</param-value>
 		</init-param>
-  	<load-on-startup>1</load-on-startup>
+  	<load-on-startup>2</load-on-startup>
   </servlet>
 
   <servlet-mapping>
   	<servlet-name>spring-web-mvc</servlet-name>
-  	<url-pattern>*</url-pattern>
+  	<url-pattern>*.html</url-pattern>
   </servlet-mapping>
 </web-app>

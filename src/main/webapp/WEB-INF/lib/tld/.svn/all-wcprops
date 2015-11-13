@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/GameProject1/!svn/ver/3309/trunk/mgame/src/main/webapp/WEB-INF/lib/tld
+END
+sql.tld
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/sql.tld
+END
+sql-1_0-rt.tld
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/sql-1_0-rt.tld
+END
+c-1_0.tld
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/c-1_0.tld
+END
+permittedTaglibs.tld
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/permittedTaglibs.tld
+END
+fn.tld
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/fn.tld
+END
+fmt-1_0.tld
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/fmt-1_0.tld
+END
+scriptfree.tld
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/scriptfree.tld
+END
+x.tld
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/x.tld
+END
+x-1_0-rt.tld
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/x-1_0-rt.tld
+END
+sql-1_0.tld
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/sql-1_0.tld
+END
+c.tld
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/GameProject1/!svn/ver/3309/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/c.tld
+END
+c-1_0-rt.tld
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/c-1_0-rt.tld
+END
+x-1_0.tld
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/x-1_0.tld
+END
+fmt.tld
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/fmt.tld
+END
+fmt-1_0-rt.tld
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/GameProject1/!svn/ver/3272/trunk/mgame/src/main/webapp/WEB-INF/lib/tld/fmt-1_0-rt.tld
+END
