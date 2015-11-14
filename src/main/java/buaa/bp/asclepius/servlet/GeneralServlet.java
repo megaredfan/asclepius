@@ -1,5 +1,7 @@
 package buaa.bp.asclepius.servlet;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,5 +69,26 @@ public class GeneralServlet {
 		userService.createUser(user);
 		request.getSession().setAttribute("userInSession", user.getUsername());
 		return new ModelAndView(index);
+	}
+	
+	@RequestMapping("/checkUserName.html")
+	public void checkUserName(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		String userName = (String)request.getParameter("userName");
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter pw = response.getWriter();
+		if(StringUtils.isBlank(userName)){
+			pw.write("<span style=\"color:red\">用户名为空！</span>");
+			pw.flush();
+			return;
+		}else if(userService.getUserByName(userName)!=null){
+			pw.write("<span style=\"color:red\">用户名已存在！</span>");
+			pw.flush();
+			return;
+		}else{
+			pw.write("<span style=\"color:green\">你可以使用该用户名！</span>");
+			pw.flush();
+			return;
+		}
+		
 	}
 }

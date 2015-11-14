@@ -1,12 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="/WEB-INF/lib/tld/c.tld"%>
-<%@ page isELIgnored = "false" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<%@ include file="../inc/include_javascript.jsp" %>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="../js/lib/jquery.js"></script>
+<script src="../js/dist/jquery.validate.js"></script>
+<script src="../js/dist/localization/messages_zh.min.js"></script>
 <script>
 $().ready(function() {
 	 $("#signupForm").validate({
@@ -33,7 +31,7 @@ $().ready(function() {
 </script>
 <script>
 function checkUserName(userName){
-	  htmlobj=$.ajax({url:"checkUserName.html?userName="+userName,type:"POST",async:true,success:function(){$("#restext").html(htmlobj.responseText);}});
+	  htmlobj=$.ajax({url:"checkUserName.html?userName="+userName + no,async:true,success:function(){$("#restext").html(htmlobj.responseText);}});
 	  
 	  }
 </script>
@@ -41,11 +39,11 @@ function checkUserName(userName){
 
 </head>
 <body>
-	<form id="signupForm" method="post" action="register.html">
+	<form id="signupForm" method="post" action="#">
 		<input type="hidden" name="opType" value="register" />
-		<label for="userName">用户名：</label><input type="text" id="userName" name="userName" onblur="checkUserName($('#userName').val())"/><span id="restext"></span><br/>
-		<label for="password">密码：</label><input type="password" id="password" name="password"/><br/>
-		<label for="confirmPassword">密码：</label><input type="password" id="confirmPassword" name="confirmPassword"/><br/>
+		<label for="userName">用户名：</label><input type="text" id="userName" name="userName" onblur='checkUserName($("#userName").val()))'/><span id="restext"></span><br/>
+		<label for="password">密码：</label><input type="text" id="password" name="password"/><br/>
+		<label for="confirmPassword">密码：</label><input type="text" id="confirmPassword" name="confirmPassword"/><br/>
 		<label for="realName">姓名：</label><input type="text" id="realName" name="realName"/><br/>
 		<label for="sex">性别：</label>
 			<select id="sex" name="sex">
@@ -55,10 +53,5 @@ function checkUserName(userName){
 		<label for="idNo">身份证号：</label><input type="text" id="idNo" name="idNo"/><br/>
 		<input type="submit"/>
 	</form>
-	<div style="color:red">
-		<c:forEach var="item" items="${fieldErrors}">
-    		<c:out value="${item}"/><br/>
-		</c:forEach>
-	</div>
 </body>
 </html>

@@ -10,7 +10,7 @@
 		<result property="lastLogin" column="lastlogin" />
 		<result property="idNo" column="idno" />
 		<result property="sex" column="sex" />
-		<result property="userName" column="userName" />
+		<result property="userName" column="username" />
 		<result property="realName" column="realname" />
 		<result property="creditLevel" column="creditlevel" />
 	</resultMap>
@@ -43,4 +43,9 @@
 	    	delete from user where id = #{id};
 		]]>
 	</delete>
+	<select id="getUserByName" parameterType="String" resultMap="userMap">
+		<![CDATA[
+	    	select * from user where username = #{username};
+		]]>
+	</select>
 </mapper>

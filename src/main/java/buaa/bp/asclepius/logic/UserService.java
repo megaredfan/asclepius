@@ -26,9 +26,11 @@ public class UserService {
 		return userMapper.getUserById(id);
 	}
 	public int createUser(User user) {
+		user.setPassword(this.getMD5(user.getPassword()));
 		return userMapper.createUser(user);
 	}
 	public int updateUser(User user) {
+		user.setPassword(this.getMD5(user.getPassword()));
 		return userMapper.updateUser(user);
 	}
 	public int deleteUser(int id) {
@@ -45,14 +47,18 @@ public class UserService {
 	 * @return
 	 */
 	public boolean authentication(String name,String password){
-		User admin = getUserByName(name);
-		if(admin == null || StringUtils.isBlank(password)){
+		User user = getUserByName(name);
+		if(user == null || StringUtils.isBlank(password)){
+			System.out.println("user == null || StringUtils.isBlank(password)");
 			return false;
 		}
 		String passWordMD5 = this.getMD5(password);
-		if( admin.getPassword().equals(passWordMD5)==true){
+		System.out.println(passWordMD5);
+		System.out.println(user.getPassword());
+		if( user.getPassword().equals(passWordMD5)==true){
 			return true;
 		}else{
+			System.out.println("else");
 			return false;
 		}
 	}
@@ -71,5 +77,8 @@ public class UserService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	public static void main(String[] args){
+		System.out.println(new UserService().getMD5("123456"));
 	}
 }

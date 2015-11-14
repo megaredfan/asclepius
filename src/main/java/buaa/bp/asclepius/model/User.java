@@ -1,12 +1,9 @@
 package buaa.bp.asclepius.model;
 
-import java.security.MessageDigest;
 import java.sql.Timestamp;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.codec.binary.Base64;
 import org.hibernate.validator.constraints.NotBlank;
 
 
@@ -33,7 +30,7 @@ public class User {
 		return password;
 	}
 	public void setPassword(String password) {
-		this.password = getMD5(password);
+		this.password = password;
 	}
 	public Timestamp getRegisterTime() {
 		return registerTime;
@@ -84,23 +81,5 @@ public class User {
 				+ lastLogin + ", idNo=" + idNo + ", sex=" + sex + ", username=" + userName + ", realname=" + realName
 				+ ", creditLevel=" + creditLevel + "]";
 	}
-	
-	/**
-	 * 计算字符串的MD5值
-	 * @param password
-	 * @return
-	 */
-	private String getMD5(String password){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-			md.update(password.getBytes());
-			return new String(Base64.encodeBase64(md.digest()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	
 }
