@@ -21,7 +21,7 @@
 		]]>
 	</select>
 	
-	<select id="getUserById" parameterType="int" resultMap="userMap">
+	<select id="getUserById" parameterType="long" resultMap="userMap">
 	    <![CDATA[
 	    	select * from user where id = #{id};
 		]]>
@@ -38,7 +38,7 @@
 	    		where id=#{id};
 		]]>
 	</update>
-	<delete id="deleteUser" parameterType="int">
+	<delete id="deleteUser" parameterType="long">
 		<![CDATA[
 	    	delete from user where id = #{id};
 		]]>

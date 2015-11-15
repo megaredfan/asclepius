@@ -3,19 +3,19 @@ package buaa.bp.asclepius.model;
 import java.sql.Timestamp;
 
 public class AppointmentDetail {
-	private int appdetailId;
+	private long appdetailId;
 	private Timestamp start;
 	private Timestamp end;
 	private int amount;
-	private int appointmentId;
-	private int doctorId;
-	private int deptId;
-	private int hospitalId;
+	private long appointmentId;
+	private long doctorId;
+	private long deptId;
+	private long hospitalId;
 	
-	public int getAppdetailId() {
+	public long getAppdetailId() {
 		return appdetailId;
 	}
-	public void setAppdetailId(int appdetailId) {
+	public void setAppdetailId(long appdetailId) {
 		this.appdetailId = appdetailId;
 	}
 	public Timestamp getStart() {
@@ -36,28 +36,28 @@ public class AppointmentDetail {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	public int getAppointmentId() {
+	public long getAppointmentId() {
 		return appointmentId;
 	}
-	public void setAppointmentId(int appointmentId) {
+	public void setAppointmentId(long appointmentId) {
 		this.appointmentId = appointmentId;
 	}
-	public int getDoctorId() {
+	public long getDoctorId() {
 		return doctorId;
 	}
-	public void setDoctorId(int doctorId) {
+	public void setDoctorId(long doctorId) {
 		this.doctorId = doctorId;
 	}
-	public int getDeptId() {
+	public long getDeptId() {
 		return deptId;
 	}
-	public void setDeptId(int deptId) {
+	public void setDeptId(long deptId) {
 		this.deptId = deptId;
 	}
-	public int getHospitalId() {
+	public long getHospitalId() {
 		return hospitalId;
 	}
-	public void setHospitalId(int hospitalId) {
+	public void setHospitalId(long hospitalId) {
 		this.hospitalId = hospitalId;
 	}
 	@Override

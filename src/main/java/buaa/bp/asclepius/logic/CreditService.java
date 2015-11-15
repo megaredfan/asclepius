@@ -15,11 +15,11 @@ public class CreditService {
 	@Resource(name="creditMapper")
 	private CreditMapper creditMapper;
 	
-	public List<Credit> getAllCredits(int userId) {
+	public List<Credit> getAllCredits(long userId) {
 		return creditMapper.getAllCredits(userId);
 	}
-	public Credit getCreditById(int userID,int creditId) {
-		return creditMapper.getCreditById(userID, creditId);
+	public Credit getCreditById(long userId,long creditId) {
+		return creditMapper.getCreditById(userId, creditId);
 	}
 	public int createCredit(Credit credit) {
 		return creditMapper.createCredit(credit);
@@ -27,7 +27,7 @@ public class CreditService {
 	public int updateCredit(Credit credit) {
 		return creditMapper.updateCredit(credit);
 	}
-	public int deleteCredit(int id) {
+	public int deleteCredit(long id) {
 		return creditMapper.deleteCredit(id);
 	}
 }

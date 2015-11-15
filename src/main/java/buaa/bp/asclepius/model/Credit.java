@@ -3,15 +3,15 @@ package buaa.bp.asclepius.model;
 import java.sql.Timestamp;
 
 public class Credit {
-	private int creditId;
+	private long creditId;
 	private String description;
 	private Timestamp createTime;
-	private int userId;
+	private long userId;
 	
-	public int getCreditId() {
+	public long getCreditId() {
 		return creditId;
 	}
-	public void setCreditId(int creditId) {
+	public void setCreditId(long creditId) {
 		this.creditId = creditId;
 	}
 	public String getDescription() {
@@ -26,10 +26,10 @@ public class Credit {
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
 	}
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 	

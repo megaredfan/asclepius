@@ -50,9 +50,9 @@ public class GeneralServlet {
 		
 		User user = new User();
 		user.setId(UUID11.getRandomId());
-		user.setUsername((String)request.getParameter("userName"));
+		user.setUserName((String)request.getParameter("userName"));
 		user.setPassword((String)request.getParameter("password"));
-		user.setRealname((String)request.getParameter("realName"));
+		user.setRealName((String)request.getParameter("realName"));
 		user.setSex((String)request.getParameter("sex"));
 		user.setRegisterTime(new Timestamp(System.currentTimeMillis()));
 		user.setIdNo((String)request.getParameter("idNo"));
@@ -67,7 +67,7 @@ public class GeneralServlet {
 			return m;
 		}
 		userService.createUser(user);
-		request.getSession().setAttribute("userInSession", user.getUsername());
+		request.getSession().setAttribute("userInSession", user.getUserName());
 		return new ModelAndView(index);
 	}
 	

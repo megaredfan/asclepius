@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.AppointmentDetailMapper">
+	<resultMap id="appointmentDetailtMap" type="buaa.bp.asclepius.model.AppointmentDetail">
+		<id property="appdetailId" column="appdetailid" />
+		<result property="start" column="start" />
+		<result property="end" column="end" />
+ 		<result property="amount" column="amount" />
+		<result property="appointmentId" column="appointmentid" />
+		<result property="doctorId" column="doctorid" />
+		<result property="deptId" column="deptid" />
+		<result property="hospitalId" column="hospitalid" />
+	</resultMap>
+	<select id="getAppointmentById" resultMap="appointmentDetailtMap">
+	    <![CDATA[
+	    	select * from appdetail where appdetailid = #{appdetailid};
+		]]>
+	</select>
+	<insert id="createAppointmentDetail" parameterType="buaa.bp.asclepius.model.AppointmentDetail">
+	    <![CDATA[
+	    	insert into appdetail(appdetailid,start,end,amount,appointmentid,doctorid,deptid,hospitalid)
+	    		values(#{appdetailId},#{start},#{end},#{amount},#{appointmentId},#{doctorId},#{deptId},#{hospitalId});
+		]]>
+	</insert>
+	<update id="updateAppointmentDetail" parameterType="buaa.bp.asclepius.model.AppointmentDetail">
+		<![CDATA[
+	    	update appdetail set start=#{start},end=#{end},amount=#{amount},appointmentid=#{appointmentId},doctorid=#{doctorId},deptid=#{deptId},hospitalid=#{hospitalId}
+	    		where appdetailid = #{appdetailId}
+		]]>
+	</update>
+	<delete id="deleteAppointmentDetail" parameterType="long">
+		<![CDATA[
+	    	delete from appdetail where appdetailid = #{appdetailId};
+		]]>
+	</delete>
+
+</mapper>

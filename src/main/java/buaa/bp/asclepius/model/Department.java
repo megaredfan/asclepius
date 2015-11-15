@@ -1,15 +1,15 @@
 package buaa.bp.asclepius.model;
 
 public class Department {
-	private int departmentId;
+	private long departmentId;
 	private String departmentName;
 	private String description;
-	private int hospitalId;
+	private long hospitalId;
 	
-	public int getDepartmentId() {
+	public long getDepartmentId() {
 		return departmentId;
 	}
-	public void setDepartmentId(int departmentId) {
+	public void setDepartmentId(long departmentId) {
 		this.departmentId = departmentId;
 	}
 	public String getDepartmentName() {
@@ -24,10 +24,10 @@ public class Department {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public int getHospitalId() {
+	public long getHospitalId() {
 		return hospitalId;
 	}
-	public void setHospitalId(int hospitalId) {
+	public void setHospitalId(long hospitalId) {
 		this.hospitalId = hospitalId;
 	}
 	

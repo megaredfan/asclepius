@@ -15,10 +15,10 @@ public class AppointmentService {
 	@Resource(name="appointmentMapper")
 	private AppointmentMapper appointmentMapper;
 	
-	public List<Appointment> getAllAppointments(int userId) {
+	public List<Appointment> getAllAppointments(long userId) {
 		return appointmentMapper.getAllAppointments(userId);
 	}
-	public Appointment getAppointmentById(int userId,int appointmentId) {
+	public Appointment getAppointmentById(long userId,long appointmentId) {
 		return appointmentMapper.getAppointmentById(userId, appointmentId);
 	}
 	public int createAppointment(Appointment appointment) {
@@ -27,7 +27,7 @@ public class AppointmentService {
 	public int updateAppointment(Appointment appointment) {
 		return appointmentMapper.updateAppointment(appointment);
 	}
-	public int deleteAppoinement(int id) {
+	public int deleteAppoinement(long id) {
 		return appointmentMapper.deleteAppoinement(id);
 	}
 }

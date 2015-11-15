@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.AppointmentMapper">
+	<resultMap id="appointmentMap" type="buaa.bp.asclepius.model.Appointment">
+		<id property="appointmentId" column="appointmentid" />
+		<result property="time" column="time" />
+		<result property="status" column="status" />
+ 		<result property="patientName" column="patientname" />
+		<result property="patientSex" column="patientsex" />
+		<result property="patientAge" column="patientage" />
+		<result property="patientInsuranceNo" column="patientinsno" />
+		<result property="userId" column="userid" />
+	</resultMap>
+	
+	<select id="getAllAppointments" parameterType="long" resultMap="appointmentMap">
+	    <![CDATA[
+	    	select * from appointment where userid = #{userid};
+		]]>
+	</select>
+	
+	<select id="getAppointmentById" resultMap="appointmentMap">
+	    <![CDATA[
+	    	select * from appointment where userid = #{0} and appointmentid = #{1};
+		]]>
+	</select>
+	<insert id="createAppointment" parameterType="buaa.bp.asclepius.model.Appointment">
+	    <![CDATA[
+	    	insert into appointment(appointmentid,time,status,patientname,patientsex,patientage,patientinsno,userid)
+	    		values(#{appointmentId},#{time},#{status},#{patientName},#{patientSex},#{patientAge},#{patientInsuranceNo},#{userId});
+		]]>
+	</insert>
+	<update id="updateAppointment" parameterType="buaa.bp.asclepius.model.Appointment">
+		<![CDATA[
+	    	update appointment set time=#{time},status=#{status},patientname=#{patientName},patientsex=#{patientSex},patientage=#{patientAge},patientinsno=#{patientInsuranceNo},userid=#{userId}
+	    		where appointmentid = #{appointmentId}
+		]]>
+	</update>
+	<delete id="deleteAppoinement" parameterType="long">
+		<![CDATA[
+	    	delete from appointment where appointmentid = #{id};
+		]]>
+	</delete>
+
+</mapper>

@@ -56,12 +56,6 @@ public class User {
 	public void setSex(String sex) {
 		this.sex = sex;
 	}
-	public String getUsername() {
-		return userName;
-	}
-	public void setUsername(String userName) {
-		this.userName = userName;
-	}
 	public int getCreditLevel() {
 		return creditLevel;
 	}
@@ -69,17 +63,25 @@ public class User {
 		this.creditLevel = creditLevel;
 	}
 	
-	public String getRealname() {
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getRealName() {
 		return realName;
 	}
-	public void setRealname(String realname) {
-		this.realName = realname;
+	public void setRealName(String realName) {
+		this.realName = realName;
 	}
+	
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", password=" + password + ", registerTime=" + registerTime + ", lastLogin="
 				+ lastLogin + ", idNo=" + idNo + ", sex=" + sex + ", username=" + userName + ", realname=" + realName
 				+ ", creditLevel=" + creditLevel + "]";
 	}
+
 	
 }

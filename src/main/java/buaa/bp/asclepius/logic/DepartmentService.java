@@ -15,10 +15,10 @@ public class DepartmentService {
 	@Resource(name="departmentMapper")
 	private DepartmentMapper departmentMapper;
 	
-	public List<Department> getAllDepartments() {
-		return departmentMapper.getAllDepartments();
+	public List<Department> getAllDepartments(long hospitalId) {
+		return departmentMapper.getAllDepartments(hospitalId);
 	}
-	public Department getDepartmentById(int departmentId) {
+	public Department getDepartmentById(long departmentId) {
 		return departmentMapper.getDepartmentById(departmentId);
 	}
 	public int createDepartment(Department department) {
@@ -27,7 +27,7 @@ public class DepartmentService {
 	public int updateDepartment(Department department) {
 		return departmentMapper.updateDepartment(department);
 	}
-	public int deleteDepartment(int id) {
+	public int deleteDepartment(long id) {
 		return departmentMapper.deleteDepartment(id);
 	}
 }

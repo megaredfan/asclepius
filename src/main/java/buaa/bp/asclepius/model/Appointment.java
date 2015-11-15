@@ -3,19 +3,19 @@ package buaa.bp.asclepius.model;
 import java.sql.Timestamp;
 
 public class Appointment {
-	private int appointmentId;
+	private long appointmentId;
 	private Timestamp time;//创建时间 
 	private int status;
 	private String patientName;
 	private String patientSex;
 	private int patientAge;
 	private String patientInsuranceNo;
-	private int userId;
+	private long userId;
 	
-	public int getAppointmentId() {
+	public long getAppointmentId() {
 		return appointmentId;
 	}
-	public void setAppointmentId(int appointmentId) {
+	public void setAppointmentId(long appointmentId) {
 		this.appointmentId = appointmentId;
 	}
 	public Timestamp getTime() {
@@ -54,10 +54,10 @@ public class Appointment {
 	public void setPatientInsuranceNo(String patientInsuranceNo) {
 		this.patientInsuranceNo = patientInsuranceNo;
 	}
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 	@Override

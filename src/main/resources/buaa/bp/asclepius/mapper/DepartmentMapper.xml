@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.DepartmentMapper">
+	<resultMap id="departmentMap" type="buaa.bp.asclepius.model.Department">
+		<id property="departmentId" column="departmentid" />
+		<result property="departmentName" column="departmentname" />
+		<result property="description" column="description" />
+		<result property="hospitalId" column="hospitalid" />
+	</resultMap>
+	<select id="getAllCredits" parameterType="long" resultMap="departmentMap">
+	    <![CDATA[
+	    	select * from credit where creditid = #{creditid};
+		]]>
+	</select>
+	<select id="getCreditById" resultMap="departmentMap">
+	    <![CDATA[
+	    	select * from credit where userid = #{0} and creditid = #{1};
+		]]>
+	</select>
+	<insert id="createCredit" parameterType="buaa.bp.asclepius.model.Department">
+	    <![CDATA[
+	    	insert into credit(creditid,description,userid,createtime)
+	    		values(#{creditId},#{description},#{userId},#{createTime});
+		]]>
+	</insert>
+	<update id="updateCredit" parameterType="buaa.bp.asclepius.model.Department">
+		<![CDATA[
+	    	update credit set description=#{description},userid=#{userId},createtime=#{createTime}
+	    		where creditid = #{creditId}
+		]]>
+	</update>
+	<delete id="deleteCredit" parameterType="long">
+		<![CDATA[
+	    	delete from credit where creditid = #{creditId};
+		]]>
+	</delete>
+
+</mapper>

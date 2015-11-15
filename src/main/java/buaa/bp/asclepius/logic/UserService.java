@@ -22,7 +22,7 @@ public class UserService {
 	public List<User> getAllUsers() {
 		return userMapper.getAllUsers();
 	}
-	public User getUserById(int id) {
+	public User getUserById(long id) {
 		return userMapper.getUserById(id);
 	}
 	public int createUser(User user) {
@@ -33,7 +33,7 @@ public class UserService {
 		user.setPassword(this.getMD5(user.getPassword()));
 		return userMapper.updateUser(user);
 	}
-	public int deleteUser(int id) {
+	public int deleteUser(long id) {
 		return userMapper.deleteUser(id);
 	}
 	public User getUserByName(String name) {

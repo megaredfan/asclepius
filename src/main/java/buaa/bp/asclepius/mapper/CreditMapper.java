@@ -5,9 +5,9 @@ import java.util.List;
 import buaa.bp.asclepius.model.Credit;
 
 public interface CreditMapper {
-	public List<Credit> getAllCredits(int userId);
-	public Credit getCreditById(int userID,int creditId);
+	public List<Credit> getAllCredits(long userId);
+	public Credit getCreditById(long userId,long creditId);
 	public int createCredit(Credit credit);
 	public int updateCredit(Credit credit);
-	public int deleteCredit(int id);
+	public int deleteCredit(long id);
 }
