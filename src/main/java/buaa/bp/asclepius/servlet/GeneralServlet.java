@@ -63,7 +63,11 @@ public class GeneralServlet {
 			m.addObject("fieldErrors",fieldErrors);
 			return m;
 		}
-		userService.createUser(user);
+		try{
+			userService.createUser(user);
+		}catch(org.springframework.dao.DuplicateKeyException e){
+			register(request,response);
+		}
 		request.getSession().setAttribute("userInSession", user.getUserName());
 		return new ModelAndView(index);
 	}
