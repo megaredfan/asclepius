@@ -18,8 +18,8 @@ public class DepartmentService {
 	public List<Department> getAllDepartments(long hospitalId) {
 		return departmentMapper.getAllDepartments(hospitalId);
 	}
-	public Department getDepartmentById(long departmentId) {
-		return departmentMapper.getDepartmentById(departmentId);
+	public Department getDepartmentById(long hospitalId,long departmentId) {
+		return departmentMapper.getDepartmentById(hospitalId,departmentId);
 	}
 	public int createDepartment(Department department) {
 		return departmentMapper.createDepartment(department);

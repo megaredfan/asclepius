@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.SystemAdminMapper">
+	<resultMap id="adminMap" type="buaa.bp.asclepius.model.SystemAdmin">
+		<id property="adminId" column="adminid" />
+		<result property="password" column="password" />
+		<result property="adminName" column="adminname" />
+		<result property="lastVisit" column="lastvisit" />
+	</resultMap>
+	<select id="getAllSystemAdmins" resultMap="adminMap">
+	    <![CDATA[
+	    	select * from sysadmin;
+		]]>
+	</select>
+	<select id="getSystemAdminById" parameterType="long" resultMap="adminMap">
+	    <![CDATA[
+	    	select * from sysadmin where adminid = #{adminId};
+		]]>
+	</select>
+	<select id="getSystemAdminByName" parameterType="String" resultMap="adminMap">
+		<![CDATA[
+	    	select * from sysadmin where adminname = #{adminname};
+		]]>
+	</select>
+	<insert id="createSystemAdmin" parameterType="buaa.bp.asclepius.model.SystemAdmin">
+	    <![CDATA[
+	    	insert into sysadmin(adminid,password,adminname,lastvisit)
+	    		values(#{adminId},#{password},#{adminName},#{lastVisit});
+		]]>
+	</insert>
+	<update id="updateSystemAdmin" parameterType="buaa.bp.asclepius.model.SystemAdmin">
+		<![CDATA[
+	    	update sysadmin set password=#{password},adminname=#{adminName},lastvisit=#{lastVisit}
+	    		where adminid = #{adminId};
+		]]>
+	</update>
+	<delete id="deleteSystemAdmin" parameterType="long">
+		<![CDATA[
+	    	delete from sysadmin where adminid = #{adminId};
+		]]>
+	</delete>
+
+</mapper>

@@ -1,14 +1,14 @@
 package buaa.bp.asclepius.model;
 
 public class Hospital {
-	private int hospitalId;
+	private long hospitalId;
 	private String hospitalName;
 	private String description;
 	
-	public int getHospitalId() {
+	public long getHospitalId() {
 		return hospitalId;
 	}
-	public void setHospitalId(int hospitalId) {
+	public void setHospitalId(long hospitalId) {
 		this.hospitalId = hospitalId;
 	}
 	public String getHospitalName() {

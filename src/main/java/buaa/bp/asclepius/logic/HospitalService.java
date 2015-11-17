@@ -18,7 +18,7 @@ public class HospitalService {
 	public List<Hospital> getAllHospitals() {
 		return hospitalMapper.getAllHospitals();
 	}
-	public Hospital getHostpitalById(int hospitalId) {
+	public Hospital getHostpitalById(long hospitalId) {
 		return hospitalMapper.getHostpitalById(hospitalId);
 	}
 	public int createHospital(Hospital hospital) {
@@ -27,7 +27,7 @@ public class HospitalService {
 	public int updateHospital(Hospital hospital) {
 		return hospitalMapper.updateHospital(hospital);
 	}
-	public int deleteHospital(int id) {
+	public int deleteHospital(long id) {
 		return hospitalMapper.deleteHospital(id);
 	}
 }

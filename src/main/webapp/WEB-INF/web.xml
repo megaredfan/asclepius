@@ -41,4 +41,10 @@
   	<servlet-name>spring-web-mvc</servlet-name>
   	<url-pattern>*.html</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>spring-web-mvc</servlet-name>
+  	<url-pattern>/index</url-pattern>
+  </servlet-mapping>
+  
+
 </web-app>

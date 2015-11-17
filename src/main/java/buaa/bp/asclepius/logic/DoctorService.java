@@ -18,7 +18,7 @@ public class DoctorService {
 	public List<Doctor> getAllDoctors() {
 		return doctorMapper.getAllDoctors();
 	}
-	public Doctor getDoctorById(int doctorId) {
+	public Doctor getDoctorById(long doctorId) {
 		return doctorMapper.getDoctorById(doctorId);
 	}
 	public int createDoctor(Doctor doctor) {
@@ -27,7 +27,7 @@ public class DoctorService {
 	public int updateDoctor(Doctor doctor) {
 		return doctorMapper.updateDoctor(doctor);
 	}
-	public int deleteDoctor(int id) {
+	public int deleteDoctor(long id) {
 		return doctorMapper.deleteDoctor(id);
 	}
 }

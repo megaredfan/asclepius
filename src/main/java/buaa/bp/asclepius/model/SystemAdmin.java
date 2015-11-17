@@ -3,15 +3,15 @@ package buaa.bp.asclepius.model;
 import java.sql.Timestamp;
 
 public class SystemAdmin {
-	private int adminId;
+	private long adminId;
 	private String password;
 	private String adminName;
 	private Timestamp lastVisit;
 	
-	public int getAdminId() {
+	public long getAdminId() {
 		return adminId;
 	}
-	public void setAdminId(int adminId) {
+	public void setAdminId(long adminId) {
 		this.adminId = adminId;
 	}
 	public String getPassword() {

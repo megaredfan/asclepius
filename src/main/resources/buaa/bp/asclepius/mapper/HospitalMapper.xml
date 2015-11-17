@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.HospitalMapper">
+	<resultMap id="hospitalMap" type="buaa.bp.asclepius.model.Hospital">
+		<id property="hospitalId" column="hospitalid" />
+		<result property="hospitalName" column="hospitalname" />
+		<result property="description" column="description" />
+	</resultMap>
+	<select id="getAllHospitals" resultMap="hospitalMap">
+	    <![CDATA[
+	    	select * from hospital;
+		]]>
+	</select>
+	<select id="getHostpitalById" parameterType="long" resultMap="hospitalMap">
+	    <![CDATA[
+	    	select * from hospital where hospitalid = #{hospitalId};
+		]]>
+	</select>
+	<insert id="createHospital" parameterType="buaa.bp.asclepius.model.Hospital">
+	    <![CDATA[
+	    	insert into hospital(hospitalid,hospitalname,description)
+	    		values(#{hospitalId},#{hospitalName},#{description});
+		]]>
+	</insert>
+	<update id="updateHospital" parameterType="buaa.bp.asclepius.model.Hospital">
+		<![CDATA[
+	    	update hospital set hospitalname=#{hospitalName},description=#{description}
+	    		where hospitalid=#{hospitalId};
+		]]>
+	</update>
+	<delete id="deleteHospital" parameterType="long">
+		<![CDATA[
+	    	delete from hospital where hospitalid=#{hospitalId};
+		]]>
+	</delete>
+
+</mapper>

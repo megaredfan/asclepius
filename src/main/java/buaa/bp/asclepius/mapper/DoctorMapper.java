@@ -6,8 +6,8 @@ import buaa.bp.asclepius.model.Doctor;
 
 public interface DoctorMapper {
 	public List<Doctor> getAllDoctors();
-	public Doctor getDoctorById(int doctorId);
+	public Doctor getDoctorById(long doctorId);
 	public int createDoctor(Doctor doctor);
 	public int updateDoctor(Doctor doctor);
-	public int deleteDoctor(int id);
+	public int deleteDoctor(long id);
 }

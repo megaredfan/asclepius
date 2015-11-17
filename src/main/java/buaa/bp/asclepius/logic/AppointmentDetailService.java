@@ -5,8 +5,6 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import buaa.bp.asclepius.mapper.AppointmentDetailMapper;
-import buaa.bp.asclepius.mapper.AppointmentDetailMapperTest;
-import buaa.bp.asclepius.model.Appointment;
 import buaa.bp.asclepius.model.AppointmentDetail;
 
 @Service

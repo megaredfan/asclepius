@@ -44,4 +44,10 @@ public class LoginServlet {
 		return new ModelAndView(index);
 		
 	}
+	
+	@RequestMapping("/index")
+	public ModelAndView index(){
+		return new ModelAndView(index);
+	}
+	
 }

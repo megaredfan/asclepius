@@ -9,7 +9,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import buaa.bp.asclepius.model.Appointment;
-import buaa.bp.asclepius.model.Credit;
 import junit.framework.Assert;
 
 public class AppointmentMapperTest {

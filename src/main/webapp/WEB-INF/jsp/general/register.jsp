@@ -49,8 +49,8 @@ function checkUserName(userName){
 		<label for="realName">姓名：</label><input type="text" id="realName" name="realName"/><br/>
 		<label for="sex">性别：</label>
 			<select id="sex" name="sex">
-				<option value="male">男</option>
-				<option value="female">女</option>
+				<option value="男">男</option>
+				<option value="女">女</option>
 			</select><br/>
 		<label for="idNo">身份证号：</label><input type="text" id="idNo" name="idNo"/><br/>
 		<input type="submit"/>

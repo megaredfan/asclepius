@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.DoctorMapper">
+	<resultMap id="doctorMap" type="buaa.bp.asclepius.model.Doctor">
+		<id property="doctorId" column="doctorid" />
+		<result property="name" column="name" />
+		<result property="sex" column="sex" />
+		<result property="level" column="level" />
+		<result property="description" column="description" />
+		<result property="departmentId" column="deptid" />
+		<result property="hospitalId" column="hospitalid" />
+	</resultMap>
+	<select id="getAllDoctors" resultMap="doctorMap">
+	    <![CDATA[
+	    	select * from doctor;
+		]]>
+	</select>
+	<select id="getDoctorById" parameterType="long" resultMap="doctorMap">
+	    <![CDATA[
+	    	select * from doctor where doctorid = #{doctorId};
+		]]>
+	</select>
+	<insert id="createDoctor" parameterType="buaa.bp.asclepius.model.Doctor">
+	    <![CDATA[
+	    	insert into doctor(doctorid,name,sex,level,description,deptid,hospitalid)
+	    		values(#{doctorId},#{name},#{sex},#{level},#{description},#{departmentId},#{hospitalId});
+		]]>
+	</insert>
+	<update id="updateDoctor" parameterType="buaa.bp.asclepius.model.Doctor">
+		<![CDATA[
+	    	update doctor set name=#{name},sex=#{sex},level=#{level},description=#{description},deptid=#{departmentId},hospitalid=#{hospitalId}
+	    		where doctorid = #{doctorId};
+		]]>
+	</update>
+	<delete id="deleteDoctor" parameterType="long">
+		<![CDATA[
+	    	delete from doctor where doctorid = #{doctorId};
+		]]>
+	</delete>
+
+</mapper>

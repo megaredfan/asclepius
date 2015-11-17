@@ -6,8 +6,8 @@ import buaa.bp.asclepius.model.Hospital;
 
 public interface HospitalMapper {
 	public List<Hospital> getAllHospitals();
-	public Hospital getHostpitalById(int hospitalId);
+	public Hospital getHostpitalById(long hospitalId);
 	public int createHospital(Hospital hospital);
 	public int updateHospital(Hospital hospital);
-	public int deleteHospital(int id);
+	public int deleteHospital(long id);
 }
