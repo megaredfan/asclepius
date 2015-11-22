@@ -36,5 +36,6 @@ public class HospitalMapperTest {
 		{
 			System.out.println(h);
 		}
+		System.out.println(hospitalMapper.selectByRange(0, hospitalMapper.count()));
 	}
 }

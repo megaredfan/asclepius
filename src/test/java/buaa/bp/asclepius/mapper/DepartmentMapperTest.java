@@ -37,5 +37,6 @@ public class DepartmentMapperTest {
 		for(Department d : departmentMapper.getAllDepartments(41216998636L)){
 			System.out.println(d);
 		}
+		System.out.println(departmentMapper.selectByRange(0, departmentMapper.count()));
 	}
 }

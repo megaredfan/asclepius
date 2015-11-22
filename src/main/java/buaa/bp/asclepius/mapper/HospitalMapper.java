@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.Hospital;
 
-public interface HospitalMapper {
+public interface HospitalMapper extends SQLRecord  {
 	public List<Hospital> getAllHospitals();
 	public Hospital getHostpitalById(long hospitalId);
 	public int createHospital(Hospital hospital);

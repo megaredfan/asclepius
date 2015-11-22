@@ -38,6 +38,7 @@ public class DoctorMapperTest {
 		for(Doctor d : doctorMapper.getAllDoctors()){
 			System.out.println(d);
 		}
+		System.out.println(doctorMapper.selectByRange(0, doctorMapper.count()));
 		
 	}
 }

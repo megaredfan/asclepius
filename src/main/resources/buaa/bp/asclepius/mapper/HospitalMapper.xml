@@ -35,5 +35,14 @@
 	    	delete from hospital where hospitalid=#{hospitalId};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from hospital;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="hospitalMap">
+		<![CDATA[
+		    	select * from hospital limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

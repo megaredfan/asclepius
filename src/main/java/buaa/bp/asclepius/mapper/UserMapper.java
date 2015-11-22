@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.User;
 
-public interface UserMapper {
+public interface UserMapper extends SQLRecord  {
 	public List<User> getAllUsers();
 	public User getUserById(long id);
 	public int createUser(User user);

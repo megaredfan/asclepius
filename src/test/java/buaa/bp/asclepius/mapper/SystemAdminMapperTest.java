@@ -39,5 +39,6 @@ public class SystemAdminMapperTest {
 		{
 			System.out.println(a);
 		}
+		System.out.println(systemAdminMapper.selectByRange(0, systemAdminMapper.count()));
 	}
 }

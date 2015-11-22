@@ -30,13 +30,19 @@ public class AppointmentDetailMapperTest {
 		
 		Assert.assertEquals(1, appointmentDetailMapper.createAppointmentDetail(appointmentDetail));
 		
-		appointmentDetail.setAppointmentId(41216998636L);
 		appointmentDetail.setEnd(new Timestamp(System.currentTimeMillis()));
 		
 		Assert.assertEquals(1, appointmentDetailMapper.updateAppointmentDetail(appointmentDetail));
 		
 		appointmentDetail = appointmentDetailMapper.getAppointmentById(41216998636L);
 		System.out.println(appointmentDetail);
+		
+		for(AppointmentDetail a : appointmentDetailMapper.getAvailableAppointments())
+		{
+			System.out.println(a);
+		}
+		
+		System.out.println(appointmentDetailMapper.selectByRange(0, appointmentDetailMapper.count()));
 
 	}
 }

@@ -47,4 +47,7 @@
 		<property name="basePackage" value="buaa.bp.asclepius.mapper" />
 		<property name="sqlSessionTemplateBeanName" value="sqlSessionFactoryTemplateAsclepius" />
 	</bean>
+	<bean name="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    	<property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
+    </bean>
 </beans>

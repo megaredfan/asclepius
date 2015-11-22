@@ -16,11 +16,10 @@ public class LoginServlet {
 	
 	private String login = "login";
 	private String index = "index";
-	
 	@Resource(name="userService")
 	private UserService userService;
 	
-	@RequestMapping("login.html")
+	@RequestMapping("/login.html")
 	public ModelAndView login(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(login);
 		String userName = (String)request.getParameter("userName");
@@ -28,19 +27,22 @@ public class LoginServlet {
 		String opType = (String)request.getParameter("opType");
 		if(StringUtils.isBlank(opType))
 		{
+			System.out.println("StringUtils.isBlank(opType)");
 			return m;
 		}
 		if(StringUtils.isBlank(userName)||StringUtils.isBlank(password))
 		{
+			System.out.println("StringUtils.isBlank(userName)||StringUtils.isBlank(password)");
 			m.addObject("message","请输入用户名或密码！");
 			return m;
 		}
 		if(!userService.authentication(userName, password))
 		{
+			System.out.println("用户名或密码错误！");
 			m.addObject("message","用户名或密码错误！");
 			return m;
 		}
-		request.getSession().setAttribute("userInSession", userName);
+		request.getSession().setAttribute("userInSession", userService.getUserByName(userName));
 		return new ModelAndView(index);
 		
 	}
@@ -49,5 +51,5 @@ public class LoginServlet {
 	public ModelAndView index(){
 		return new ModelAndView(index);
 	}
-	
+
 }

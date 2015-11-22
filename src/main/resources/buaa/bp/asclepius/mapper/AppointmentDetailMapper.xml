@@ -8,11 +8,17 @@
 		<result property="start" column="start" />
 		<result property="end" column="end" />
  		<result property="amount" column="amount" />
-		<result property="appointmentId" column="appointmentid" />
 		<result property="doctorId" column="doctorid" />
 		<result property="deptId" column="deptid" />
 		<result property="hospitalId" column="hospitalid" />
 	</resultMap>
+	<select id="getAvailableAppointments" resultMap="appointmentDetailtMap">
+	    <![CDATA[
+	    	select * from appdetail where start < date_format(curdate(),'%Y-%m-%d %H:%i:%s')
+	    							and end > date_format(curdate(),'%Y-%m-%d %H:%i:%s')
+	    							and amount > 0;
+		]]>
+	</select>
 	<select id="getAppointmentById" resultMap="appointmentDetailtMap">
 	    <![CDATA[
 	    	select * from appdetail where appdetailid = #{appdetailid};
@@ -20,13 +26,13 @@
 	</select>
 	<insert id="createAppointmentDetail" parameterType="buaa.bp.asclepius.model.AppointmentDetail">
 	    <![CDATA[
-	    	insert into appdetail(appdetailid,start,end,amount,appointmentid,doctorid,deptid,hospitalid)
-	    		values(#{appdetailId},#{start},#{end},#{amount},#{appointmentId},#{doctorId},#{deptId},#{hospitalId});
+	    	insert into appdetail(appdetailid,start,end,amount,doctorid,deptid,hospitalid)
+	    		values(#{appdetailId},#{start},#{end},#{amount},#{doctorId},#{deptId},#{hospitalId});
 		]]>
 	</insert>
 	<update id="updateAppointmentDetail" parameterType="buaa.bp.asclepius.model.AppointmentDetail">
 		<![CDATA[
-	    	update appdetail set start=#{start},end=#{end},amount=#{amount},appointmentid=#{appointmentId},doctorid=#{doctorId},deptid=#{deptId},hospitalid=#{hospitalId}
+	    	update appdetail set start=#{start},end=#{end},amount=#{amount},doctorid=#{doctorId},deptid=#{deptId},hospitalid=#{hospitalId}
 	    		where appdetailid = #{appdetailId}
 		]]>
 	</update>
@@ -35,5 +41,14 @@
 	    	delete from appdetail where appdetailid = #{appdetailId};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from appdetail;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="appointmentDetailtMap">
+		<![CDATA[
+		    	select * from appdetail limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

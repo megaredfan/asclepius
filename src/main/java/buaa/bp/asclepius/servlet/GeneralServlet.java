@@ -14,27 +14,39 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import buaa.bp.asclepius.logic.AppointmentDetailService;
+import buaa.bp.asclepius.logic.MessageService;
 import buaa.bp.asclepius.logic.UserService;
+import buaa.bp.asclepius.model.AppointmentDetail;
+import buaa.bp.asclepius.model.Message;
 import buaa.bp.asclepius.model.User;
 import buaa.bp.asclepius.utils.UUID11;
 
 @Controller
-@RequestMapping("general")
+@RequestMapping("/general")
 public class GeneralServlet {
 	
 	private String register = "general/register";
 	private String index = "index";
+	private String list = "general/list";
+	private String message = "general/message";
 	
-	@Autowired(required=false)
+	@Resource(name="validator")
 	private Validator validator;
 	
 	@Resource(name="userService")
 	private UserService userService;
+	
+	@Resource(name="appointmentDetailService")
+	private AppointmentDetailService appointmentDetailService;
+	
+	@Resource(name="messageService")
+	private MessageService messageService;
 	
 	@RequestMapping("/register.html")
 	public ModelAndView register(HttpServletRequest request,HttpServletResponse response){
@@ -65,11 +77,45 @@ public class GeneralServlet {
 		}
 		try{
 			userService.createUser(user);
-		}catch(org.springframework.dao.DuplicateKeyException e){
+		}catch(DuplicateKeyException e){
 			register(request,response);
 		}
 		request.getSession().setAttribute("userInSession", user.getUserName());
 		return new ModelAndView(index);
+	}
+	
+	@RequestMapping("/appointmentList.html")
+	public ModelAndView appointmentList(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(list);
+		List<AppointmentDetail> list = appointmentDetailService.getAvailableAppointments();
+		m.addObject("appoinments",list);
+		return m;
+	}
+	
+	@RequestMapping("/leaveAMessage.html")
+	public ModelAndView leaveAMessage(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(message);
+		String opType=(String)request.getParameter("opType");
+		if(StringUtils.isBlank(opType))
+		{
+			return m;
+		}
+		Message message = new Message();
+		message.setId(UUID11.getRandomId());
+		message.setContent((String)request.getParameter("content"));
+		if(request.getSession().getAttribute("userInSession")!=null){
+			message.setAuthor((String)request.getSession().getAttribute("userInSession"));
+		}else{
+			message.setAuthor("游客");
+		}
+		message.setCreateTime(new Timestamp(System.currentTimeMillis()));		
+		message.setPid(0L);
+		try{
+			messageService.createMessage(message);
+		}catch(DuplicateKeyException e){
+			leaveAMessage(request,response);
+		}
+		return m;
 	}
 	
 	@RequestMapping("/checkUserName.html")
@@ -92,4 +138,5 @@ public class GeneralServlet {
 		}
 		
 	}
+	
 }

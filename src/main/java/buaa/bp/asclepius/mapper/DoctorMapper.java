@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.Doctor;
 
-public interface DoctorMapper {
+public interface DoctorMapper extends SQLRecord  {
 	public List<Doctor> getAllDoctors();
 	public Doctor getDoctorById(long doctorId);
 	public int createDoctor(Doctor doctor);

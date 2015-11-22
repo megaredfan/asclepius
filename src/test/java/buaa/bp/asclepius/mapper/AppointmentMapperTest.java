@@ -29,6 +29,7 @@ public class AppointmentMapperTest {
 		Assert.assertEquals(1, appointmentMapper.createAppointment(appointment));
 		
 		appointment.setUserId(41216998636L);
+		appointment.setAppointmentDetailId(41216998636L);
 		
 		Assert.assertEquals(1, appointmentMapper.updateAppointment(appointment));
 		
@@ -40,6 +41,6 @@ public class AppointmentMapperTest {
 		{
 			System.out.println(a);
 		}
-
+		System.out.println(appointmentMapper.selectByRange(0, appointmentMapper.count()));
 	}
 }

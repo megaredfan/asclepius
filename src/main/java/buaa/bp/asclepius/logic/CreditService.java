@@ -30,4 +30,10 @@ public class CreditService {
 	public int deleteCredit(long id) {
 		return creditMapper.deleteCredit(id);
 	}
+	public int count() {
+		return creditMapper.count();
+	}
+	public List<?> selectByRange(int start,int length) {
+		return creditMapper.selectByRange(start, length);
+	}
 }

@@ -7,7 +7,6 @@ public class AppointmentDetail {
 	private Timestamp start;
 	private Timestamp end;
 	private int amount;
-	private long appointmentId;
 	private long doctorId;
 	private long deptId;
 	private long hospitalId;
@@ -36,12 +35,6 @@ public class AppointmentDetail {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	public long getAppointmentId() {
-		return appointmentId;
-	}
-	public void setAppointmentId(long appointmentId) {
-		this.appointmentId = appointmentId;
-	}
 	public long getDoctorId() {
 		return doctorId;
 	}
@@ -63,7 +56,7 @@ public class AppointmentDetail {
 	@Override
 	public String toString() {
 		return "AppointmentDetail [appdetailId=" + appdetailId + ", start=" + start + ", end=" + end + ", amount="
-				+ amount + ", appointmentId=" + appointmentId + ", doctorId=" + doctorId + ", deptId=" + deptId
+				+ amount + ", doctorId=" + doctorId + ", deptId=" + deptId
 				+ ", hospitalId=" + hospitalId + "]";
 	}
 	

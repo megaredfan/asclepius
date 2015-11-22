@@ -11,12 +11,18 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 		
-		<mvc:annotation-driven />
     	<context:component-scan base-package="buaa.bp.asclepius.servlet" />
     	
-    	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-    		 <property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
-    	</bean>
+    	
+ 		
+ 		<!-- 拦截器配置 -->
+		<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">  
+	     <property name="interceptors">  
+	         <list>  
+	                <bean class="buaa.bp.asclepius.interceptor.LoginInterceptor" />  
+	         </list>  
+	     </property>  
+	    </bean> 
  		
  		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"     
         p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" />

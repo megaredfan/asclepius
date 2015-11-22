@@ -2,15 +2,18 @@ package buaa.bp.asclepius.model;
 
 import java.sql.Timestamp;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class Appointment {
 	private long appointmentId;
 	private Timestamp time;//创建时间 
 	private int status;
-	private String patientName;
+	@NotBlank(message="患者姓名不能为空！")private String patientName;
 	private String patientSex;
-	private int patientAge;
+	@NotBlank(message="患者年龄不能为空！")private int patientAge;
 	private String patientInsuranceNo;
 	private long userId;
+	@NotBlank(message="预约失败！请重新预约")private long appointmentDetailId;
 	
 	public long getAppointmentId() {
 		return appointmentId;
@@ -60,12 +63,21 @@ public class Appointment {
 	public void setUserId(long userId) {
 		this.userId = userId;
 	}
+	
+	public long getAppointmentDetailId() {
+		return appointmentDetailId;
+	}
+	public void setAppointmentDetailId(long appointmentDetailId) {
+		this.appointmentDetailId = appointmentDetailId;
+	}
 	@Override
 	public String toString() {
 		return "Appointment [appointmentId=" + appointmentId + ", time=" + time + ", status=" + status
 				+ ", patientName=" + patientName + ", patientSex=" + patientSex + ", patientAge=" + patientAge
-				+ ", patientInsuranceNo=" + patientInsuranceNo + ", userId=" + userId + "]";
+				+ ", patientInsuranceNo=" + patientInsuranceNo + ", userId=" + userId + ", appointmentDetailId="
+				+ appointmentDetailId + "]";
 	}
+	
 	
 	
 }

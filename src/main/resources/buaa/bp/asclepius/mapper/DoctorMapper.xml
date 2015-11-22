@@ -39,5 +39,14 @@
 	    	delete from doctor where doctorid = #{doctorId};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from doctor;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="doctorMap">
+		<![CDATA[
+		    	select * from doctor limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

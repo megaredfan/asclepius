@@ -30,4 +30,10 @@ public class AppointmentService {
 	public int deleteAppoinement(long id) {
 		return appointmentMapper.deleteAppoinement(id);
 	}
+	public int count() {
+		return appointmentMapper.count();
+	}
+	public List<?> selectByRange(int start,int length) {
+		return appointmentMapper.selectByRange(start, length);
+	}
 }

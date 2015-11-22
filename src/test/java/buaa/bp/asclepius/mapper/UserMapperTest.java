@@ -36,10 +36,13 @@ public class UserMapperTest {
 		
 		Assert.assertEquals(1, userMapper.updateUser(user));
 		
+		System.out.println(userMapper.count());
+		
 		user = userMapper.getUserById(41216998636L);
 		System.out.println(user);
 		
 		user = userMapper.getUserByName("megaredfan");
 		System.out.println(user);
+		System.out.println(userMapper.selectByRange(0, userMapper.count()));
 	}
 }

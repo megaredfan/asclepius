@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.Credit;
 
-public interface CreditMapper {
+public interface CreditMapper extends SQLRecord  {
 	public List<Credit> getAllCredits(long userId);
 	public Credit getCreditById(long userId,long creditId);
 	public int createCredit(Credit credit);

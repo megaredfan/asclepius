@@ -36,5 +36,14 @@
 	    	delete from credit where creditid = #{creditId};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from credit;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="creditMap">
+		<![CDATA[
+		    	select * from credit limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

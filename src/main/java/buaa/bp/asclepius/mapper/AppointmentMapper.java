@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.Appointment;
 
-public interface AppointmentMapper {
+public interface AppointmentMapper extends SQLRecord  {
 	public List<Appointment> getAllAppointments(long userId);
 	public Appointment getAppointmentById(long userId,long appointmentId);
 	public int updateAppointment(Appointment appointment);

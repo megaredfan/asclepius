@@ -9,7 +9,7 @@
 <title>Index</title>
 </head>
 <body>
-	welcome！${userInSession}
-	<a href="/general/register.html">注册</a>
+	welcome！${userInSession.userName}
+	<a href="general/register.html">注册</a>
 </body>
 </html>

@@ -41,5 +41,6 @@ public class CreditMapperTest {
 		{
 			System.out.println(c);
 		}
+		System.out.println(creditMapper.selectByRange(0, creditMapper.count()));
 	}
 }

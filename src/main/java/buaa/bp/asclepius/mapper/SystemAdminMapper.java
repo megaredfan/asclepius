@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.SystemAdmin;
 
-public interface SystemAdminMapper {
+public interface SystemAdminMapper extends SQLRecord  {
 	public List<SystemAdmin> getAllSystemAdmins();
 	public SystemAdmin getSystemAdminById(long adminId);
 	public int createSystemAdmin(SystemAdmin systemAdmin);

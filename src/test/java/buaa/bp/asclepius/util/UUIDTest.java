@@ -8,7 +8,7 @@ public class UUIDTest {
 
 	@Test
 	public void test() {
-		for(int i=0; i<100000;i++)
+		for(int i=0; i<100;i++)
 		{
 			System.out.println(UUID11.getRandomId());
 		}

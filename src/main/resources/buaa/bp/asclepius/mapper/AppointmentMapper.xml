@@ -12,6 +12,7 @@
 		<result property="patientAge" column="patientage" />
 		<result property="patientInsuranceNo" column="patientinsno" />
 		<result property="userId" column="userid" />
+		<result property="appointmentDetailId" column="appdetailid" />
 	</resultMap>
 	
 	<select id="getAllAppointments" parameterType="long" resultMap="appointmentMap">
@@ -19,7 +20,6 @@
 	    	select * from appointment where userid = #{userid};
 		]]>
 	</select>
-	
 	<select id="getAppointmentById" resultMap="appointmentMap">
 	    <![CDATA[
 	    	select * from appointment where userid = #{0} and appointmentid = #{1};
@@ -27,13 +27,13 @@
 	</select>
 	<insert id="createAppointment" parameterType="buaa.bp.asclepius.model.Appointment">
 	    <![CDATA[
-	    	insert into appointment(appointmentid,time,status,patientname,patientsex,patientage,patientinsno,userid)
-	    		values(#{appointmentId},#{time},#{status},#{patientName},#{patientSex},#{patientAge},#{patientInsuranceNo},#{userId});
+	    	insert into appointment(appointmentid,time,status,patientname,patientsex,patientage,patientinsno,userid,appdetailid)
+	    		values(#{appointmentId},#{time},#{status},#{patientName},#{patientSex},#{patientAge},#{patientInsuranceNo},#{userId},#{appointmentDetailId});
 		]]>
 	</insert>
 	<update id="updateAppointment" parameterType="buaa.bp.asclepius.model.Appointment">
 		<![CDATA[
-	    	update appointment set time=#{time},status=#{status},patientname=#{patientName},patientsex=#{patientSex},patientage=#{patientAge},patientinsno=#{patientInsuranceNo},userid=#{userId}
+	    	update appointment set time=#{time},status=#{status},patientname=#{patientName},patientsex=#{patientSex},patientage=#{patientAge},patientinsno=#{patientInsuranceNo},userid=#{userId},appdetailid=#{appointmentDetailId}
 	    		where appointmentid = #{appointmentId}
 		]]>
 	</update>
@@ -42,5 +42,14 @@
 	    	delete from appointment where appointmentid = #{id};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from appointment;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="appointmentMap">
+		<![CDATA[
+		    	select * from appointment limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

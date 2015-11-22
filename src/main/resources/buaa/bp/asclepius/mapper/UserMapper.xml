@@ -26,6 +26,9 @@
 	    	select * from user where id = #{id};
 		]]>
 	</select>
+	
+
+	
 	<insert id="createUser" parameterType="buaa.bp.asclepius.model.User">
 	    <![CDATA[
 	    	insert into user(id,password,regtime,lastlogin,idno,sex,username,realname,creditlevel)
@@ -48,4 +51,15 @@
 	    	select * from user where username = #{username};
 		]]>
 	</select>
+		<select id="count" resultType="int">
+	    <![CDATA[
+	    	select count(1) from user;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="userMap">
+		<![CDATA[
+		    	select * from user limit #{0},#{1};
+		]]>
+	</select>
+
 </mapper>

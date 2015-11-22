@@ -30,4 +30,10 @@ public class DepartmentService {
 	public int deleteDepartment(long id) {
 		return departmentMapper.deleteDepartment(id);
 	}
+	public int count() {
+		return departmentMapper.count();
+	}
+	public List<?> selectByRange(int start,int length) {
+		return departmentMapper.selectByRange(start, length);
+	}
 }

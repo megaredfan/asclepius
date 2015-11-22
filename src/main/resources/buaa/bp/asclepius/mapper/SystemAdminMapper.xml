@@ -41,5 +41,14 @@
 	    	delete from sysadmin where adminid = #{adminId};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from sysadmin;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="adminMap">
+		<![CDATA[
+		    	select * from sysadmin limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

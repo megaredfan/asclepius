@@ -30,4 +30,10 @@ public class HospitalService {
 	public int deleteHospital(long id) {
 		return hospitalMapper.deleteHospital(id);
 	}
+	public int count() {
+		return hospitalMapper.count();
+	}
+	public List<?> selectByRange(int start,int length) {
+		return hospitalMapper.selectByRange(start, length);
+	}
 }

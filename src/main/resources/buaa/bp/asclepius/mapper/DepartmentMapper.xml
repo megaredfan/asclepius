@@ -36,5 +36,14 @@
 	    	delete from department where deptid = #{deptid};
 		]]>
 	</delete>
-
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from department;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="departmentMap">
+		<![CDATA[
+		    	select * from department limit #{0},#{1};
+		]]>
+	</select>
 </mapper>

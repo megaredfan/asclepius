@@ -4,7 +4,7 @@ import java.util.List;
 
 import buaa.bp.asclepius.model.Department;
 
-public interface DepartmentMapper {
+public interface DepartmentMapper extends SQLRecord  {
 	public List<Department> getAllDepartments(long hospitalId);
 	public Department getDepartmentById(long hospitalId,long departmentId);
 	public int createDepartment(Department department);

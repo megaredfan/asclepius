@@ -39,6 +39,12 @@ public class UserService {
 	public User getUserByName(String name) {
 		return userMapper.getUserByName(name);
 	}
+	public int count() {
+		return userMapper.count();
+	}
+	public List<?> selectByRange(int start,int length) {
+		return userMapper.selectByRange(start, length);
+	}
 	
 	/**
 	 * 验证用户名密码并且返回用户权限值
@@ -49,16 +55,12 @@ public class UserService {
 	public boolean authentication(String name,String password){
 		User user = getUserByName(name);
 		if(user == null || StringUtils.isBlank(password)){
-			System.out.println("user == null || StringUtils.isBlank(password)");
 			return false;
 		}
 		String passWordMD5 = this.getMD5(password);
-		System.out.println(passWordMD5);
-		System.out.println(user.getPassword());
 		if( user.getPassword().equals(passWordMD5)==true){
 			return true;
 		}else{
-			System.out.println("else");
 			return false;
 		}
 	}

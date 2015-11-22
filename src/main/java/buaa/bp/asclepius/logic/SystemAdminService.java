@@ -38,6 +38,12 @@ public class SystemAdminService {
 	private SystemAdmin getAdminByName(String name) {
 		return systemAdminMapper.getSystemAdminByName(name);
 	}
+	public int count() {
+		return systemAdminMapper.count();
+	}
+	public List<?> selectByRange(int start,int length) {
+		return systemAdminMapper.selectByRange(start, length);
+	}
 	/**
 	 * 验证用户名密码并且返回用户权限值
 	 * @param name
@@ -47,16 +53,12 @@ public class SystemAdminService {
 	public boolean authentication(String name,String password){
 		SystemAdmin admin = getAdminByName(name);
 		if(admin == null || StringUtils.isBlank(password)){
-			System.out.println("user == null || StringUtils.isBlank(password)");
 			return false;
 		}
 		String passWordMD5 = this.getMD5(password);
-		System.out.println(passWordMD5);
-		System.out.println(admin.getPassword());
 		if( admin.getPassword().equals(passWordMD5)==true){
 			return true;
 		}else{
-			System.out.println("else");
 			return false;
 		}
 	}
