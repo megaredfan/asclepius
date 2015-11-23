@@ -16,13 +16,13 @@ public class AspectControl {
 	@Pointcut("execution(* selectByRange(..))")
 	public void aspectjMethod(){}
 	
-	@Pointcut("execution(ModelAndView myAppointments(..)")
+	@Pointcut("execution(* myAppointments(..))")
 	public void beforeMyAppointments(){}
 	
-	@Pointcut("execution(ModelAndView print(..)")
+	@Pointcut("execution(* print(..))")
 	public void afterPrint(){}
 	
-	@Pointcut("execution(ModelAndView makeAnAppointment(..)")
+	@Pointcut("execution(* makeAnAppointment(..))")
 	public void afterMakingAnAppointment(){};
 	
 	@Around(value="aspectjMethod()")
@@ -49,7 +49,7 @@ public class AspectControl {
 		//TODO:保存出诊记录，进行信用评级等操作
 	}
 	
-	@After(value="afterMakingAnAppointment")
+	@After(value="afterMakingAnAppointment()")
 	public void confirmAppointment(){
 		//TODO:进行挂号确认
 		Timer timer = new Timer();

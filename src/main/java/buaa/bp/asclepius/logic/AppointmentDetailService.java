@@ -18,6 +18,9 @@ public class AppointmentDetailService {
 	public List<AppointmentDetail> getAvailableAppointments(){
 		return appointmentDetailMapper.getAvailableAppointments();
 	}
+	public List<AppointmentDetail> getAvailableAppointmentsByRange(int start,int length){
+		return appointmentDetailMapper.getAvailableAppointmentsByRange(start,length);
+	}
 	public AppointmentDetail getAppointmentById(long appointmentDetailId) {
 		return appointmentDetailMapper.getAppointmentById(appointmentDetailId);
 	}

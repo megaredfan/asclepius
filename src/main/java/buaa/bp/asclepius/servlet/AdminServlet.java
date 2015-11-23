@@ -28,7 +28,8 @@ public class AdminServlet {
 	private String admin = "admin/index";
 	private String login = "admin/login";
 	private String message = "admin/message";
-	private String users = "admin/users";
+	private String userlist = "admin/users";
+	private String useredit ="admin/useredit";
 	private String applist = "admin/applist";
 	
 	@Resource(name="messageService")
@@ -98,10 +99,17 @@ public class AdminServlet {
 	
 	@RequestMapping("userList.html")
 	public ModelAndView userList(HttpServletRequest request,HttpServletResponse response){
-		ModelAndView m = new ModelAndView(users);
+		ModelAndView m = new ModelAndView(userlist);
 		List<?> list = userService.getAllUsers();
 		//TODO:添加分页实现
 		m.addObject("users",list);
+		return m;
+	}
+	
+	@RequestMapping("userEdit.html")
+	public ModelAndView userEdit(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(useredit);
+		//TODO:添加实现
 		return m;
 	}
 	
@@ -121,4 +129,5 @@ public class AdminServlet {
 		return appointmentDetailList(request,response);
 			
 	}
+
 }

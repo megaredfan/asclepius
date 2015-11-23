@@ -19,6 +19,14 @@
 	    							and amount > 0;
 		]]>
 	</select>
+	<select id="getAvailableAppointmentsByRange" resultMap="appointmentDetailtMap">
+	    <![CDATA[
+	    	select * from appdetail where start < date_format(curdate(),'%Y-%m-%d %H:%i:%s')
+	    							and end > date_format(curdate(),'%Y-%m-%d %H:%i:%s')
+	    							and amount > 0
+	    							limit #{0},#{1};
+		]]>
+	</select>
 	<select id="getAppointmentById" resultMap="appointmentDetailtMap">
 	    <![CDATA[
 	    	select * from appdetail where appdetailid = #{appdetailid};

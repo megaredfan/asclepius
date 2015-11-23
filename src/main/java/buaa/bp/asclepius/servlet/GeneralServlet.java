@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,6 @@ import buaa.bp.asclepius.utils.UUID11;
 @Controller
 @RequestMapping("/general")
 public class GeneralServlet {
-	
 	private String register = "general/register";
 	private String index = "index";
 	private String list = "general/list";
@@ -47,6 +47,9 @@ public class GeneralServlet {
 	
 	@Resource(name="messageService")
 	private MessageService messageService;
+	
+	@Resource(name="configLoader")
+	private PropertiesConfiguration configLoader;
 	
 	@RequestMapping("/register.html")
 	public ModelAndView register(HttpServletRequest request,HttpServletResponse response){
@@ -87,7 +90,24 @@ public class GeneralServlet {
 	@RequestMapping("/appointmentList.html")
 	public ModelAndView appointmentList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(list);
-		List<AppointmentDetail> list = appointmentDetailService.getAvailableAppointments();
+		
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (appointmentDetailService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<AppointmentDetail> list = appointmentDetailService.getAvailableAppointmentsByRange(pageNo * pageSize,pageSize);
 		m.addObject("appoinments",list);
 		return m;
 	}
@@ -138,5 +158,4 @@ public class GeneralServlet {
 		}
 		
 	}
-	
 }

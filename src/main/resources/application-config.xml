@@ -13,9 +13,9 @@
         http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
         
     <context:component-scan base-package="buaa.bp.asclepius"/>
-    <aop:aspectj-autoproxy />
     
-    <bean class="buaa.bp.asclepius.interceptor.AspectjTest" />
+    <aop:aspectj-autoproxy />
+    <bean class="buaa.bp.asclepius.interceptor.AspectControl" />
     
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 		<property name="locations">
@@ -54,5 +54,8 @@
 	</bean>
 	<bean name="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
     	<property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
+    </bean>
+    <bean name="configLoader" class="org.apache.commons.configuration.PropertiesConfiguration">
+    	<constructor-arg value="config.properties" />
     </bean>
 </beans>
