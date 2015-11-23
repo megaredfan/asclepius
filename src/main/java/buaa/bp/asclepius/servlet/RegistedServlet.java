@@ -29,6 +29,7 @@ public class RegistedServlet {
 	private String account = "registed/account";
 	private String pay = "registed/pay";
 	private String makeAppointment = "registed/makeAppointment";
+	private String applist = "registed/appointmentList";
 	
 	@Autowired(required=false)
 	private Validator validator;
@@ -42,6 +43,12 @@ public class RegistedServlet {
 	@RequestMapping("/account.html")
 	public ModelAndView account(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(account);
+		return m;
+	}
+	
+	@RequestMapping("/myAppointments.html")
+	public ModelAndView myAppointments(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(applist);
 		return m;
 	}
 	
@@ -93,7 +100,7 @@ public class RegistedServlet {
 	@RequestMapping("/cancelAnAppointment.html")
 	public ModelAndView cancelAnAppointment(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(account);
-		String s_appid = (String)request.getParameter("appointmentid");
+		String s_appid = (String)request.getParameter("appointmentId");
 		if(StringUtils.isBlank(s_appid)){
 			//TODO:添加提示信息，在前段用alert弹出
 			return m ;

@@ -20,7 +20,7 @@ public class LoginInterceptor  extends HandlerInterceptorAdapter{
 	 */
 	private List<String> urlInitList(){
 		List<String> list=new ArrayList<String>();
-		list.add("");
+		list.add("print.html");
 		list.add("index");
 		list.add("login.html");
 		list.add("appointmentList.html");

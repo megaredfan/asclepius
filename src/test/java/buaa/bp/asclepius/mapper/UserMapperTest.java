@@ -44,5 +44,6 @@ public class UserMapperTest {
 		user = userMapper.getUserByName("megaredfan");
 		System.out.println(user);
 		System.out.println(userMapper.selectByRange(0, userMapper.count()));
+
 	}
 }
