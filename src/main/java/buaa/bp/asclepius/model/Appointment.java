@@ -15,6 +15,12 @@ public class Appointment {
 	private long userId;
 	@NotBlank(message="预约失败！请重新预约")private long appointmentDetailId;
 	
+	public static final int WAITING_FOR_PAYING = 1;
+	public static final int NOT_PAYED = 2;
+	public static final int WAITING_FOR_PRINTING = 3;
+	public static final int PRINTED = 4;
+	public static final int NOT_PRINTED = 5;
+	
 	public long getAppointmentId() {
 		return appointmentId;
 	}

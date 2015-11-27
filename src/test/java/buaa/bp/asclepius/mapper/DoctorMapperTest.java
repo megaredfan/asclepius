@@ -1,10 +1,11 @@
 package buaa.bp.asclepius.mapper;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+
 
 import buaa.bp.asclepius.model.Doctor;
 
@@ -12,7 +13,7 @@ public class DoctorMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	DoctorMapper doctorMapper = context.getBean("doctorMapper",DoctorMapper.class);
 	
-	@BeforeClass
+	@Before
 	public void before(){
 		Assert.assertEquals(1, doctorMapper.deleteDoctor(41216998636L));
 	}

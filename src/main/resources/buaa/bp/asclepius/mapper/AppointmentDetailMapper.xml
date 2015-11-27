@@ -7,6 +7,7 @@
 		<id property="appdetailId" column="appdetailid" />
 		<result property="start" column="start" />
 		<result property="end" column="end" />
+		<result property="date" column="date" />
  		<result property="amount" column="amount" />
 		<result property="doctorId" column="doctorid" />
 		<result property="deptId" column="deptid" />
@@ -34,13 +35,13 @@
 	</select>
 	<insert id="createAppointmentDetail" parameterType="buaa.bp.asclepius.model.AppointmentDetail">
 	    <![CDATA[
-	    	insert into appdetail(appdetailid,start,end,amount,doctorid,deptid,hospitalid)
-	    		values(#{appdetailId},#{start},#{end},#{amount},#{doctorId},#{deptId},#{hospitalId});
+	    	insert into appdetail(appdetailid,start,end,date,amount,doctorid,deptid,hospitalid)
+	    		values(#{appdetailId},#{start},#{end},#{date},#{amount},#{doctorId},#{deptId},#{hospitalId});
 		]]>
 	</insert>
 	<update id="updateAppointmentDetail" parameterType="buaa.bp.asclepius.model.AppointmentDetail">
 		<![CDATA[
-	    	update appdetail set start=#{start},end=#{end},amount=#{amount},doctorid=#{doctorId},deptid=#{deptId},hospitalid=#{hospitalId}
+	    	update appdetail set start=#{start},end=#{end},date=#{date},amount=#{amount},doctorid=#{doctorId},deptid=#{deptId},hospitalid=#{hospitalId}
 	    		where appdetailid = #{appdetailId}
 		]]>
 	</update>

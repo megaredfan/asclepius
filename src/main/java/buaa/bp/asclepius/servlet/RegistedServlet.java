@@ -1,5 +1,6 @@
 package buaa.bp.asclepius.servlet;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class RegistedServlet {
 	@RequestMapping("/myAppointments.html")
 	public ModelAndView myAppointments(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(applist);
+		//TODO:添加分页
 		return m;
 	}
 	
@@ -78,6 +80,7 @@ public class RegistedServlet {
 		appointment.setPatientSex((String)request.getParameter("patientSex"));
 		appointment.setPatientInsuranceNo((String)request.getParameter("patientInsuranceNo"));
 		appointment.setTime(new Timestamp(System.currentTimeMillis()));
+		appointment.setStatus(Appointment.WAITING_FOR_PAYING);
 		
 		Set<ConstraintViolation<Appointment>> constraintViolations = validator.validate(appointment);
 		if(constraintViolations.size() > 0){
@@ -122,5 +125,42 @@ public class RegistedServlet {
 		ModelAndView m = new ModelAndView(pay);
 		return m;
 		//TODO:跳转到支付页面
+	}
+	
+	@RequestMapping("/payConfirmed.html")
+	public boolean payConfirmed(HttpServletRequest request){
+		String trade_status = (String)request.getParameter("trade_status");//交易状态
+		/*String trade_no = request.getParameter("trade_no"); // 支付宝交易号
+        String order_no = request.getParameter("out_trade_no"); // 获取订单号
+        String total_fee = request.getParameter("price"); // 获取总金额
+*/
+        String subject = "";
+        try {
+        	subject = new String(request.getParameter("subject").getBytes(
+                "ISO-8859-1"), "UTF-8");
+        	} catch (UnsupportedEncodingException e1) {
+        		// TODO Auto-generated catch block
+        		e1.printStackTrace();
+        		}// 商品名称、订单名称,保存用户id和预约id
+      
+        /*if (request.getParameter("body") != null) {
+        	try {
+        		String body = new String(request.getParameter("body").getBytes(
+                                 "ISO-8859-1"), "UTF-8");
+        		} catch (UnsupportedEncodingException e) {
+        			e.printStackTrace();
+        			}// 商品描述、订单备注、描述
+                }*/
+		if(trade_status.compareTo("WAIT_SELLER_SEND_GOODS") == 0 ||
+				trade_status.compareTo("TRADE_FINISHED") == 0)
+		{
+			String[] str = subject.split(",");
+			long userId = Long.parseLong(str[0]);
+			long appointmentId = Long.parseLong(str[1]);
+			Appointment app = appointmentService.getAppointmentById(userId, appointmentId);
+			app.setStatus(Appointment.WAITING_FOR_PRINTING);
+			return true;
+		}
+		return false;
 	}
 }

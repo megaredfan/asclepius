@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50625
 File Encoding         : 65001
 
-Date: 2015-11-19 18:59:15
+Date: 2015-11-26 12:53:39
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,17 +27,12 @@ CREATE TABLE `appdetail` (
   `start` datetime DEFAULT NULL,
   `end` datetime DEFAULT NULL,
   `amount` int(11) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
   PRIMARY KEY (`appdetailid`),
   KEY `hospitalid` (`hospitalid`),
   KEY `deptid` (`deptid`),
   KEY `doctorid` (`doctorid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of appdetail
--- ----------------------------
-INSERT INTO `appdetail` VALUES ('1', '1', '1', '1', '2015-11-16 18:43:10', '2015-11-18 18:43:17', '2');
-INSERT INTO `appdetail` VALUES ('41216998636', '41216998636', '41216998636', '41216998636', '2015-11-17 18:46:35', '2015-11-17 18:46:35', '0');
 
 -- ----------------------------
 -- Table structure for appointment
@@ -58,11 +53,6 @@ CREATE TABLE `appointment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of appointment
--- ----------------------------
-INSERT INTO `appointment` VALUES ('41216998636', '41216998636', '2015-11-17 17:15:10', '0', null, null, '0', null, null);
-
--- ----------------------------
 -- Table structure for credit
 -- ----------------------------
 DROP TABLE IF EXISTS `credit`;
@@ -76,11 +66,6 @@ CREATE TABLE `credit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of credit
--- ----------------------------
-INSERT INTO `credit` VALUES ('41216998636', 'hello', '41216998636', '2015-11-17 17:15:10');
-
--- ----------------------------
 -- Table structure for department
 -- ----------------------------
 DROP TABLE IF EXISTS `department`;
@@ -92,11 +77,6 @@ CREATE TABLE `department` (
   PRIMARY KEY (`deptid`),
   KEY `hospitalid` (`hospitalid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of department
--- ----------------------------
-INSERT INTO `department` VALUES ('41216998636', '外科', '描述：外科', '41216998636');
 
 -- ----------------------------
 -- Table structure for doctor
@@ -116,11 +96,6 @@ CREATE TABLE `doctor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of doctor
--- ----------------------------
-INSERT INTO `doctor` VALUES ('41216998636', 'DR. Lee', '男', '主治医生', '41216998636', '41216998636', 'good');
-
--- ----------------------------
 -- Table structure for hospital
 -- ----------------------------
 DROP TABLE IF EXISTS `hospital`;
@@ -130,11 +105,6 @@ CREATE TABLE `hospital` (
   `description` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`hospitalid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of hospital
--- ----------------------------
-INSERT INTO `hospital` VALUES ('41216998636', 'hopital1', 'good hospital');
 
 -- ----------------------------
 -- Table structure for message
@@ -150,12 +120,6 @@ CREATE TABLE `message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of message
--- ----------------------------
-INSERT INTO `message` VALUES ('41216998636', 'hello world!', 'visitor1', '2015-11-18 19:32:40', '0');
-INSERT INTO `message` VALUES ('41216998637', 'hello world to you!', 'visitor2', '2015-11-18 19:32:40', '41216998636');
-
--- ----------------------------
 -- Table structure for sysadmin
 -- ----------------------------
 DROP TABLE IF EXISTS `sysadmin`;
@@ -166,11 +130,6 @@ CREATE TABLE `sysadmin` (
   `lastvisit` datetime DEFAULT NULL,
   PRIMARY KEY (`adminid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of sysadmin
--- ----------------------------
-INSERT INTO `sysadmin` VALUES ('41216998636', '4QrcOUm6Wau+VuBX8g+IPg==', 'admin', '2015-11-17 17:15:11');
 
 -- ----------------------------
 -- Table structure for user
@@ -189,9 +148,3 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of user
--- ----------------------------
-INSERT INTO `user` VALUES ('41216998636', '4QrcOUm6Wau+VuBX8g+IPg==', '2015-11-17 17:15:11', '2015-11-17 17:15:11', '500102199501178593', 'male', '熊纪元', 'megaredfan', '0');
-INSERT INTO `user` VALUES ('73634463036', '4QrcOUm6Wau+VuBX8g+IPg==', '2015-11-15 18:16:00', null, '111111111111111111', '男', '邓迪', 'dd', '0');

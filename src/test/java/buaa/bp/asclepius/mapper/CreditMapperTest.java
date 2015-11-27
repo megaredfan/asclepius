@@ -3,19 +3,18 @@ package buaa.bp.asclepius.mapper;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import buaa.bp.asclepius.model.Credit;
-import junit.framework.Assert;
 
 public class CreditMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	CreditMapper creditMapper = context.getBean("creditMapper",CreditMapper.class);
 	
-	@BeforeClass
+	@Before
 	public void before(){
 		Assert.assertEquals(1,creditMapper.deleteCredit(41216998636L));
 	}

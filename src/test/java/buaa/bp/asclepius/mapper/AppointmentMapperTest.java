@@ -3,19 +3,20 @@ package buaa.bp.asclepius.mapper;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+
 
 import buaa.bp.asclepius.model.Appointment;
-import junit.framework.Assert;
 
 public class AppointmentMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	AppointmentMapper appointmentMapper = context.getBean("appointmentMapper",AppointmentMapper.class);
 	
-	@BeforeClass
+	@Before
 	public void before(){
 		Assert.assertEquals(1, appointmentMapper.deleteAppoinement(41216998636L));
 	}

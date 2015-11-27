@@ -2,19 +2,19 @@ package buaa.bp.asclepius.mapper;
 
 import java.sql.Timestamp;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import buaa.bp.asclepius.model.Message;
-import junit.framework.Assert;
 
 public class MessageMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	MessageMapper messageMapper = context.getBean("messageMapper",MessageMapper.class);
 	
-	@BeforeClass
+	@Before
 	public void before(){
 		Assert.assertEquals(1, messageMapper.deleteMessage(41216998636L));
 		Assert.assertEquals(1, messageMapper.deleteMessage(41216998637L));

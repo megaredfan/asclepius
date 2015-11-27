@@ -2,19 +2,21 @@ package buaa.bp.asclepius.mapper;
 
 import java.sql.Timestamp;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+
 
 import buaa.bp.asclepius.model.SystemAdmin;
-import junit.framework.Assert;
+
 
 public class SystemAdminMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	SystemAdminMapper systemAdminMapper = context .getBean("systemAdminMapper",SystemAdminMapper.class);
 	
-	@BeforeClass
+	@Before
 	public void before(){
 		Assert.assertEquals(1, systemAdminMapper.deleteSystemAdmin(41216998636L));
 	}

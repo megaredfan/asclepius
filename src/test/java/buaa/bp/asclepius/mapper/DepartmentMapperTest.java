@@ -1,10 +1,12 @@
 package buaa.bp.asclepius.mapper;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+
+
 
 import buaa.bp.asclepius.model.Department;
 
@@ -13,7 +15,7 @@ public class DepartmentMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	DepartmentMapper departmentMapper = context.getBean("departmentMapper",DepartmentMapper.class);
 	
-	@BeforeClass
+	@Before
 	public void before(){
 		Assert.assertEquals(1, departmentMapper.deleteDepartment(41216998636L));
 	}
