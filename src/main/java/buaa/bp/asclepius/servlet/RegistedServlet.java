@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import buaa.bp.asclepius.logic.AppointmentService;
 import buaa.bp.asclepius.logic.UserService;
 import buaa.bp.asclepius.model.Appointment;
+import buaa.bp.asclepius.model.AppointmentDetail;
 import buaa.bp.asclepius.model.User;
 import buaa.bp.asclepius.utils.UUID11;
 
@@ -34,6 +36,9 @@ public class RegistedServlet {
 	
 	@Autowired(required=false)
 	private Validator validator;
+	
+	@Resource(name="configLoader")
+	private PropertiesConfiguration configLoader;
 	
 	@Resource(name="userService")
 	private UserService userService;
@@ -50,7 +55,25 @@ public class RegistedServlet {
 	@RequestMapping("/myAppointments.html")
 	public ModelAndView myAppointments(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(applist);
-		//TODO:添加分页
+		
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (appointmentService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = appointmentService.selectByRange(pageNo * pageSize,pageSize);
+		m.addObject("appointments",list);
 		return m;
 	}
 	

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -57,6 +58,9 @@ public class AdminServlet {
 	
 	@Resource(name="userService")
 	private UserService userService;
+	
+	@Resource(name="configLoader")
+	private PropertiesConfiguration configLoader;
 	
 	@Resource(name="systemAdminService")
 	private SystemAdminService systemAdminService;
@@ -125,15 +129,48 @@ public class AdminServlet {
 		}catch(NumberFormatException | DuplicateKeyException e){
 			return m;
 		}
-		//TODO:添加分页实现
+		
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (messageService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = messageService.selectByRange(pageNo * pageSize,pageSize);
+		m.addObject("messages",list);
 		return m;
 	}
 		
 	@RequestMapping("/appointmentDetailList.html")
 	public ModelAndView appointmentDetailList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(applist);
-		List<?> list = appointmentDetailService.getAvailableAppointments();
-		//TODO:添加分页实现
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (appointmentDetailService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = appointmentDetailService.getAvailableAppointmentsByRange(pageNo * pageSize,pageSize);
 		m.addObject("appointments",list);
 		return m;
 	}
@@ -195,6 +232,24 @@ public class AdminServlet {
 	public ModelAndView departmentList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(deptlist);
 		
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (departmentService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = departmentService.selectByRange(pageNo * pageSize,pageSize);
+		m.addObject("departments",list);
 		return m;
 	}
 
@@ -295,7 +350,25 @@ public class AdminServlet {
 	@RequestMapping("/hospitalList.html")
 	public ModelAndView hospitalList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(hosList);
-		//TODO:添加分页
+		
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (hospitalService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = hospitalService.selectByRange(pageNo * pageSize,pageSize);
+		m.addObject("hospitals",list);
 		return m;
 	}
 
@@ -383,10 +456,29 @@ public class AdminServlet {
 		}
 		return hospitalList(request, response);
 	}
-	
+
+	@RequestMapping("/doctorList.html")
 	public ModelAndView doctorList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(doctorlist);
-		//TODO:添加分页
+		
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (doctorService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = doctorService.selectByRange(pageNo * pageSize,pageSize);
+		m.addObject("doctors",list);
 		return m;
 	}
 
@@ -493,11 +585,26 @@ public class AdminServlet {
 	}
 	
 	
-	@RequestMapping("userList.html")
+	@RequestMapping("/userList.html")
 	public ModelAndView userList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(userlist);
-		List<?> list = userService.getAllUsers();
-		//TODO:添加分页实现
+		String s_pageNo = "0";
+		int pageNo = 0;
+		int pageSize = configLoader.getInt("page.pageSize");
+		int totalPages = (userService.count() + pageSize - 1) / pageSize;
+		s_pageNo = (String)request.getParameter("pageNo");
+		try{
+			pageNo = Integer.parseInt(s_pageNo);
+		}catch(Exception e){
+			
+		}
+		if(pageNo < 0){
+			pageNo = 0;
+		}
+		if(pageNo > totalPages){
+			pageNo = totalPages;
+		}
+		List<?> list = userService.selectByRange(pageNo * pageSize,pageSize);
 		m.addObject("users",list);
 		return m;
 	}

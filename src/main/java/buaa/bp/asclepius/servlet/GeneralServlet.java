@@ -108,7 +108,7 @@ public class GeneralServlet {
 			pageNo = totalPages;
 		}
 		List<AppointmentDetail> list = appointmentDetailService.getAvailableAppointmentsByRange(pageNo * pageSize,pageSize);
-		m.addObject("appoinments",list);
+		m.addObject("appointments",list);
 		return m;
 	}
 	
