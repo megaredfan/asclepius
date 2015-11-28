@@ -2,17 +2,17 @@ package buaa.bp.asclepius.mapper;
 
 import java.sql.Timestamp;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import buaa.bp.asclepius.model.AppointmentDetail;
+import junit.framework.Assert;
 
 public class AppointmentDetailMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
-	AppointmentDetailMapper appointmentDetailMapper = context.getBean("appointmentDetailMapper",AppointmentDetailMapper.class);
+	AppointmentDetailMapper appointmentDetailMapper = context.getBean(AppointmentDetailMapper.class);
 	
 	@Before
 	public void before(){

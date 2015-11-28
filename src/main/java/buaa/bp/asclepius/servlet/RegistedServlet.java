@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import buaa.bp.asclepius.logic.AppointmentService;
 import buaa.bp.asclepius.logic.UserService;
 import buaa.bp.asclepius.model.Appointment;
-import buaa.bp.asclepius.model.AppointmentDetail;
 import buaa.bp.asclepius.model.User;
 import buaa.bp.asclepius.utils.UUID11;
 

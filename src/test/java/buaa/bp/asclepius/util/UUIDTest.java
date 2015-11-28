@@ -1,6 +1,6 @@
 package buaa.bp.asclepius.util;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 import buaa.bp.asclepius.utils.UUID11;
 
