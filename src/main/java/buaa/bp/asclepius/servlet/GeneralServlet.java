@@ -2,6 +2,8 @@ package buaa.bp.asclepius.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +25,18 @@ import org.springframework.web.servlet.ModelAndView;
 import buaa.bp.asclepius.logic.AppointmentDetailService;
 import buaa.bp.asclepius.logic.MessageService;
 import buaa.bp.asclepius.logic.UserService;
-import buaa.bp.asclepius.model.AppointmentDetail;
 import buaa.bp.asclepius.model.Message;
 import buaa.bp.asclepius.model.User;
+import buaa.bp.asclepius.utils.MailUtil;
 import buaa.bp.asclepius.utils.UUID11;
 
 @Controller
 @RequestMapping("/general")
 public class GeneralServlet {
-	private String register = "general/register";
-	private String index = "index";
-	private String list = "general/list";
-	private String message = "general/message";
-	
+	private static String register = "general/register";
+	private static String list = "general/list";
+	private static String message = "general/message";
+	private static String activate ="general/activate";
 	@Resource(name="validator")
 	private Validator validator;
 	
@@ -68,6 +69,13 @@ public class GeneralServlet {
 		user.setSex((String)request.getParameter("sex"));
 		user.setRegisterTime(new Timestamp(System.currentTimeMillis()));
 		user.setIdNo((String)request.getParameter("idNo"));
+		user.setEmail((String)request.getParameter("email"));
+		user.setActiveFlag(0);
+		user.setValidateCode(userService.getMD5(user.getEmail()));
+		
+		MailUtil mailUtil = new MailUtil();
+		
+		
 		Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
 		if(constraintViolations.size() > 0){
 			List<String> fieldErrors = new ArrayList<String>();
@@ -80,35 +88,19 @@ public class GeneralServlet {
 		}
 		try{
 			userService.createUser(user);
+			System.out.println(userService.getUserById(user.getId()));
 		}catch(DuplicateKeyException e){
-			register(request,response);
+			return register(request,response);
 		}
-		request.getSession().setAttribute("userInSession", user.getUserName());
-		return new ModelAndView(index);
+		mailUtil.send(user.getEmail(),user.getId(),user.getValidateCode());
+		return new ModelAndView(activate);
 	}
 	
 	@RequestMapping("/appointmentList.html")
 	public ModelAndView appointmentList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(list);
 		
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (appointmentDetailService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<AppointmentDetail> list = appointmentDetailService.getAvailableAppointmentsByRange(pageNo * pageSize,pageSize);
-		m.addObject("appointments",list);
+		m.addObject("appointments",appointmentDetailService.generateList(request, response));
 		return m;
 	}
 	
@@ -133,7 +125,7 @@ public class GeneralServlet {
 		try{
 			messageService.createMessage(message);
 		}catch(DuplicateKeyException e){
-			leaveAMessage(request,response);
+			return leaveAMessage(request,response);
 		}
 		return m;
 	}
@@ -157,5 +149,44 @@ public class GeneralServlet {
 			return;
 		}
 		
+	}
+	
+	@RequestMapping("/userActivate.html")
+	public ModelAndView userActivate(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(activate);
+		StringBuffer requesturl = request.getRequestURL();
+		System.out.println(requesturl.toString());
+		String validateCode = (String)request.getParameter("validateCode");
+		String s_userid = (String)request.getParameter("userId");
+		System.out.println(validateCode+" "+s_userid);
+		if(StringUtils.isBlank(validateCode)||StringUtils.isBlank(s_userid)){
+			m.addObject("status",0);
+			m.addObject("message","激活失败！请重新注册");
+		}
+		try {
+			validateCode = URLDecoder.decode(validateCode,"UTF-8");
+			System.out.println("in url:" + validateCode);
+		} catch (UnsupportedEncodingException e1) {
+			System.out.println("不支持的编码方式！");
+		}
+		try{
+			long userId = Long.parseLong(s_userid);
+			User user = userService.getUserById(userId);
+			System.out.println("in table" + user.getValidateCode());
+			if(user.getValidateCode().compareTo(validateCode)==0){
+				user.setActiveFlag(1);
+				userService.updateUser(user);
+				m.addObject("status",1);
+				m.addObject("message","激活成功！");
+			}
+			else{
+				m.addObject("status",0);
+				m.addObject("message","激活失败！请重新注册");
+			}
+		}catch(Exception e){
+			m.addObject("status",0);
+			m.addObject("message","激活失败！请重新注册");
+		}
+		return m;
 	}
 }

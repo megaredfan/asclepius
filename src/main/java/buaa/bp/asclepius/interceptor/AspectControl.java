@@ -1,12 +1,15 @@
 package buaa.bp.asclepius.interceptor;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -14,16 +17,32 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.dao.DuplicateKeyException;
 
+import buaa.bp.asclepius.logic.AppointmentDetailService;
 import buaa.bp.asclepius.logic.AppointmentService;
+import buaa.bp.asclepius.logic.CreditService;
+import buaa.bp.asclepius.logic.UserService;
 import buaa.bp.asclepius.model.Appointment;
+import buaa.bp.asclepius.model.Credit;
+import buaa.bp.asclepius.model.User;
+import buaa.bp.asclepius.utils.UUID11;
 
 @Aspect
 public class AspectControl {
-	//private static Logger logger = Logger.getLogger(AspectControl.class);
+	private static Logger logger = Logger.getLogger(AspectControl.class);
 	
 	@Resource(name="appointmentService")
 	private AppointmentService appointmentService;
+	
+	@Resource(name="appointmentDetailService")
+	private AppointmentDetailService appointmentDetailService;	
+	
+	@Resource(name="creditService")
+	private CreditService creditService;
+	
+	@Resource(name="userService")
+	private UserService userService;
 	
 	@Pointcut("execution(* selectByRange(..))")
 	public void aspectjMethod(){}
@@ -40,47 +59,66 @@ public class AspectControl {
 	@Around(value="aspectjMethod()")
 	public Object aroundAdvice(ProceedingJoinPoint pjp)throws Throwable{
 
-		for(Object obj : pjp.getArgs())
-		{
-			System.out.println(obj);
-		}
-		System.out.println("before invoke");
-		
-		Object retvar = pjp.proceed();
-		System.out.println("after invoke");
-		return retvar;
+		return pjp.proceed();
 	}
 	
 	@Before(value="beforeMyAppointments()")
 	public void checkAppointments(JoinPoint jp) throws Throwable{
-		//TODO:检查用户所有预约的状态，对未支付，未打印等状态进行处理
-		/*Object[] args = jp.getArgs();
+		//检查用户所有预约的状态，对未支付，未打印等状态进行处理
+		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
-		HttpServletResponse response = (HttpServletResponse)args[1];
 		
 		long userId;
 		
 		String s_id = (String)request.getParameter("userId");
 		if(StringUtils.isBlank(s_id))
 		{
+			logger.info("用户id为空.");
 			return;
 		}
 		try{
 			userId = Long.parseLong(s_id);
 		}catch(Exception e){
+			logger.error("用户id转换失败.",e);
 			return;
 		}
 		List<Appointment> list = appointmentService.getAllAppointments(userId);
 		for(Appointment app : list)
 		{
-			//TODO:检查预约状态
-		}*/
+			try{
+				long passed = System.currentTimeMillis()-app.getTime().getTime();
+				if((passed/1000/60)>45 && app.getStatus()==Appointment.WAITING_FOR_PAYING){
+					app.setStatus(Appointment.NOT_PAYED);
+				}
+				long time = appointmentDetailService.getAppointmentById(app.getAppointmentDetailId()).getDate().getTime();
+				if(System.currentTimeMillis()>time && app.getStatus()==Appointment.WAITING_FOR_PRINTING){
+					app.setStatus(Appointment.NOT_PAYED);
+				}
+			}catch(Exception e){
+				logger.error(e);
+				return;
+			}
+		}
 	}
 	
 	@After(value="afterPrint()")
 	public void postPrint(JoinPoint jp){
-		//TODO:保存出诊记录，进行信用评级等操作
-		
+		//保存出诊记录，进行信用评级等操作
+		Object[] args = jp.getArgs();
+		HttpServletRequest request = (HttpServletRequest)args[0];
+		//CreditLog creditLog = new CreditLog();
+		User user = userService.getUserById(Long.parseLong(request.getParameter("userId")));
+		user.setCreditLevel(user.getCreditLevel()+1);
+		Credit credit = new Credit();
+		credit.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		credit.setDescription("");
+		credit.setUserId(user.getId());
+		try{
+			credit.setCreditId(UUID11.getRandomId());
+			creditService.createCredit(credit);
+		}catch(DuplicateKeyException e){
+			postPrint(jp);
+		}
 	}
 	
 	@Around(value="afterMakingAnAppointment()")

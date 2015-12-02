@@ -3,6 +3,8 @@ package buaa.bp.asclepius.logic;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +12,7 @@ import buaa.bp.asclepius.mapper.CreditMapper;
 import buaa.bp.asclepius.model.Credit;
 
 @Service
-public class CreditService {
+public class CreditService extends GeneralService  {
 	
 	@Resource(name="creditMapper")
 	private CreditMapper creditMapper;
@@ -35,5 +37,8 @@ public class CreditService {
 	}
 	public List<?> selectByRange(int start,int length) {
 		return creditMapper.selectByRange(start, length);
+	}
+	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
+		return super.generateList(request, response);
 	}
 }

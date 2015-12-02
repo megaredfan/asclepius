@@ -55,24 +55,7 @@ public class RegistedServlet {
 	public ModelAndView myAppointments(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(applist);
 		
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (appointmentService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = appointmentService.selectByRange(pageNo * pageSize,pageSize);
-		m.addObject("appointments",list);
+		m.addObject("appointments",appointmentService.generateList(request, response));
 		return m;
 	}
 	

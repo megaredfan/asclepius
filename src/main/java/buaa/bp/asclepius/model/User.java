@@ -18,6 +18,9 @@ public class User {
 	@NotBlank(message="性别不能为空！") private String sex;
 	@NotBlank(message="用户名不能为空！") private String userName;
 	@NotBlank(message="姓名不能为空！") private String realName;
+	@NotBlank(message="邮箱不能为空！") private String email;
+	private int activeFlag;
+	private String validateCode;
 	private int creditLevel;
 	
 	public long getId() {
@@ -63,6 +66,24 @@ public class User {
 		this.creditLevel = creditLevel;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public int getActiveFlag() {
+		return activeFlag;
+	}
+	public void setActiveFlag(int activeFlag) {
+		this.activeFlag = activeFlag;
+	}
+	public String getValidateCode() {
+		return validateCode;
+	}
+	public void setValidateCode(String validateCode) {
+		this.validateCode = validateCode;
+	}
 	public String getUserName() {
 		return userName;
 	}
@@ -75,13 +96,14 @@ public class User {
 	public void setRealName(String realName) {
 		this.realName = realName;
 	}
-	
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", password=" + password + ", registerTime=" + registerTime + ", lastLogin="
-				+ lastLogin + ", idNo=" + idNo + ", sex=" + sex + ", username=" + userName + ", realname=" + realName
+				+ lastLogin + ", idNo=" + idNo + ", sex=" + sex + ", userName=" + userName + ", realName=" + realName
+				+ ", email=" + email + ", activeFlag=" + activeFlag + ", validateCode=" + validateCode
 				+ ", creditLevel=" + creditLevel + "]";
 	}
-
+	
+	
 	
 }

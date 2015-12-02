@@ -4,6 +4,8 @@ import java.security.MessageDigest;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +15,7 @@ import buaa.bp.asclepius.mapper.SystemAdminMapper;
 import buaa.bp.asclepius.model.SystemAdmin;
 
 @Service
-public class SystemAdminService {
+public class SystemAdminService extends GeneralService {
 
 	@Resource(name="systemAdminMapper")
 	private SystemAdminMapper systemAdminMapper;
@@ -43,6 +45,9 @@ public class SystemAdminService {
 	}
 	public List<?> selectByRange(int start,int length) {
 		return systemAdminMapper.selectByRange(start, length);
+	}
+	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
+		return super.generateList(request, response);
 	}
 	/**
 	 * 验证用户名密码并且返回用户权限值

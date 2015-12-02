@@ -3,6 +3,8 @@ package buaa.bp.asclepius.logic;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +12,7 @@ import buaa.bp.asclepius.mapper.DoctorMapper;
 import buaa.bp.asclepius.model.Doctor;
 
 @Service
-public class DoctorService {
+public class DoctorService extends GeneralService{
 	
 	@Resource(name="doctorMapper")
 	private DoctorMapper doctorMapper;
@@ -35,5 +37,8 @@ public class DoctorService {
 	}
 	public List<?> selectByRange(int start,int length) {
 		return doctorMapper.selectByRange(start, length);
+	}
+	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
+		return super.generateList(request, response);
 	}
 }

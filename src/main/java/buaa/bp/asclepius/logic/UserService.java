@@ -4,6 +4,8 @@ import java.security.MessageDigest;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +16,7 @@ import buaa.bp.asclepius.mapper.UserMapper;
 import buaa.bp.asclepius.model.User;
 
 @Service
-public class UserService {
+public class UserService extends GeneralService {
 
 	@Resource(name="userMapper")
 	private UserMapper userMapper;
@@ -45,7 +47,9 @@ public class UserService {
 	public List<?> selectByRange(int start,int length) {
 		return userMapper.selectByRange(start, length);
 	}
-	
+	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
+		return super.generateList(request, response);
+	}
 	/**
 	 * 验证用户名密码并且返回用户权限值
 	 * @param name
@@ -58,7 +62,7 @@ public class UserService {
 			return false;
 		}
 		String passWordMD5 = this.getMD5(password);
-		if( user.getPassword().equals(passWordMD5)==true){
+		if( user.getPassword().equals(passWordMD5)==true && user.getActiveFlag()==1){
 			return true;
 		}else{
 			return false;

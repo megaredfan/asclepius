@@ -28,6 +28,8 @@ public class LoginInterceptor  extends HandlerInterceptorAdapter{
 		list.add("auth.html");
 		list.add("index.html");
 		list.add("register.html");
+		list.add("checkUserName.html");
+		list.add("userActivate.html");
 		return list;
 	}
 	

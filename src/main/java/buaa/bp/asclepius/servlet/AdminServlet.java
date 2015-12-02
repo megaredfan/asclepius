@@ -130,48 +130,14 @@ public class AdminServlet {
 			return m;
 		}
 		
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (messageService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = messageService.selectByRange(pageNo * pageSize,pageSize);
-		m.addObject("messages",list);
+		m.addObject("messages",messageService.generateList(request, response));
 		return m;
 	}
 		
 	@RequestMapping("/appointmentDetailList.html")
 	public ModelAndView appointmentDetailList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(applist);
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (appointmentDetailService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = appointmentDetailService.getAvailableAppointmentsByRange(pageNo * pageSize,pageSize);
-		m.addObject("appointments",list);
+		m.addObject("appointments",appointmentDetailService.generateList(request, response));
 		return m;
 	}
 	
@@ -232,24 +198,7 @@ public class AdminServlet {
 	public ModelAndView departmentList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(deptlist);
 		
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (departmentService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = departmentService.selectByRange(pageNo * pageSize,pageSize);
-		m.addObject("departments",list);
+		m.addObject("departments",departmentService.generateList(request, response));
 		return m;
 	}
 
@@ -350,25 +299,8 @@ public class AdminServlet {
 	@RequestMapping("/hospitalList.html")
 	public ModelAndView hospitalList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(hosList);
-		
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (hospitalService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = hospitalService.selectByRange(pageNo * pageSize,pageSize);
-		m.addObject("hospitals",list);
+
+		m.addObject("hospitals",hospitalService.generateList(request, response));
 		return m;
 	}
 
@@ -461,24 +393,7 @@ public class AdminServlet {
 	public ModelAndView doctorList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(doctorlist);
 		
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (doctorService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = doctorService.selectByRange(pageNo * pageSize,pageSize);
-		m.addObject("doctors",list);
+		m.addObject("doctors",doctorService.generateList(request, response));
 		return m;
 	}
 
@@ -588,24 +503,8 @@ public class AdminServlet {
 	@RequestMapping("/userList.html")
 	public ModelAndView userList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(userlist);
-		String s_pageNo = "0";
-		int pageNo = 0;
-		int pageSize = configLoader.getInt("page.pageSize");
-		int totalPages = (userService.count() + pageSize - 1) / pageSize;
-		s_pageNo = (String)request.getParameter("pageNo");
-		try{
-			pageNo = Integer.parseInt(s_pageNo);
-		}catch(Exception e){
-			
-		}
-		if(pageNo < 0){
-			pageNo = 0;
-		}
-		if(pageNo > totalPages){
-			pageNo = totalPages;
-		}
-		List<?> list = userService.selectByRange(pageNo * pageSize,pageSize);
-		m.addObject("users",list);
+
+		m.addObject("users",userService.generateList(request, response));
 		return m;
 	}
 	

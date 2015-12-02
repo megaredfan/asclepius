@@ -3,6 +3,8 @@ package buaa.bp.asclepius.logic;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +12,7 @@ import buaa.bp.asclepius.mapper.AppointmentDetailMapper;
 import buaa.bp.asclepius.model.AppointmentDetail;
 
 @Service
-public class AppointmentDetailService {
+public class AppointmentDetailService extends GeneralService {
 
 	@Resource(name="appointmentDetailMapper")
 	private AppointmentDetailMapper appointmentDetailMapper;
@@ -37,6 +39,9 @@ public class AppointmentDetailService {
 		return appointmentDetailMapper.count();
 	}
 	public List<?> selectByRange(int start,int length) {
-		return appointmentDetailMapper.selectByRange(start, length);
+		return appointmentDetailMapper.getAvailableAppointmentsByRange(start,length);
+	}
+	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
+		return super.generateList(request, response);
 	}
 }
