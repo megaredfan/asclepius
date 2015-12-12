@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 public class User {
 	private long id;
 	@NotBlank(message="密码不能为空！")
-	@Size(min=6)
+	@Size(message="密码长度不得小于5！",min=5)
 	private String password;
 	private Timestamp registerTime;
 	private Timestamp lastLogin;

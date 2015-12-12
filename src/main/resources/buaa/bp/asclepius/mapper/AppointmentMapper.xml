@@ -37,7 +37,7 @@
 	    		where appointmentid = #{appointmentId}
 		]]>
 	</update>
-	<delete id="deleteAppoinement" parameterType="long">
+	<delete id="deleteAppointment" parameterType="long">
 		<![CDATA[
 	    	delete from appointment where appointmentid = #{id};
 		]]>
@@ -50,6 +50,11 @@
 	<select id="selectByRange" resultMap="appointmentMap">
 		<![CDATA[
 		    	select * from appointment limit #{0},#{1};
+		]]>
+	</select>
+	<select id="getAllAppointmetnsByRange" resultMap="appointmentMap">
+		<![CDATA[
+		    	select * from appointment where userid=#{0} limit #{1},#{2};
 		]]>
 	</select>
 </mapper>

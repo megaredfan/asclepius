@@ -10,4 +10,5 @@ public interface DoctorMapper extends SQLRecord  {
 	public int createDoctor(Doctor doctor);
 	public int updateDoctor(Doctor doctor);
 	public int deleteDoctor(long id);
+	public List<Doctor> getDoctorsByDepartment(long departmentId);
 }

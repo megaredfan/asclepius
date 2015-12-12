@@ -4,7 +4,7 @@ public class Department {
 	private long departmentId;
 	private String departmentName;
 	private String description;
-	private long hospitalId;
+	private Hospital hospital;
 	
 	public long getDepartmentId() {
 		return departmentId;
@@ -24,17 +24,16 @@ public class Department {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public long getHospitalId() {
-		return hospitalId;
+	public Hospital getHospital() {
+		return hospital;
 	}
-	public void setHospitalId(long hospitalId) {
-		this.hospitalId = hospitalId;
+	public void setHospital(Hospital hospital) {
+		this.hospital = hospital;
 	}
-	
 	@Override
 	public String toString() {
 		return "Department [departmentId=" + departmentId + ", departmentName=" + departmentName + ", description="
-				+ description + ", hospitalId=" + hospitalId + "]";
+				+ description + ", hospital=" + hospital + "]";
 	}
 	
 	

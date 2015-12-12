@@ -5,40 +5,40 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import buaa.bp.asclepius.logic.AppointmentDetailService;
+import buaa.bp.asclepius.logic.DepartmentService;
+import buaa.bp.asclepius.logic.HospitalService;
 import buaa.bp.asclepius.logic.MessageService;
 import buaa.bp.asclepius.logic.UserService;
 import buaa.bp.asclepius.model.Message;
 import buaa.bp.asclepius.model.User;
-import buaa.bp.asclepius.utils.MailUtil;
 import buaa.bp.asclepius.utils.UUID11;
+
 
 @Controller
 @RequestMapping("/general")
 public class GeneralServlet {
-	private static String register = "general/register";
-	private static String list = "general/list";
-	private static String message = "general/message";
-	private static String activate ="general/activate";
-	@Resource(name="validator")
-	private Validator validator;
+	
+	private static final String hoslist = "general/hoslist";
+	private static final String deptlist = "general/deptlist";
+	private static final String message = "general/messages";
+	private static final String activate = "general/activate";
+	private static final String index = "index";
 	
 	@Resource(name="userService")
 	private UserService userService;
@@ -49,58 +49,39 @@ public class GeneralServlet {
 	@Resource(name="messageService")
 	private MessageService messageService;
 	
+	@Resource(name="hospitalService")
+	private HospitalService hospitalService;
+	
+	@Resource(name="departmentService")
+	private DepartmentService departmentService;
+	
 	@Resource(name="configLoader")
 	private PropertiesConfiguration configLoader;
 	
-	@RequestMapping("/register.html")
-	public ModelAndView register(HttpServletRequest request,HttpServletResponse response){
-		ModelAndView m = new ModelAndView(register);
-		String opType=(String)request.getParameter("opType");
-		if(StringUtils.isBlank(opType))
-		{
-			return m;
-		}
-		
-		User user = new User();
-		user.setId(UUID11.getRandomId());
-		user.setUserName((String)request.getParameter("userName"));
-		user.setPassword((String)request.getParameter("password"));
-		user.setRealName((String)request.getParameter("realName"));
-		user.setSex((String)request.getParameter("sex"));
-		user.setRegisterTime(new Timestamp(System.currentTimeMillis()));
-		user.setIdNo((String)request.getParameter("idNo"));
-		user.setEmail((String)request.getParameter("email"));
-		user.setActiveFlag(0);
-		user.setValidateCode(userService.getMD5(user.getEmail()));
-		
-		MailUtil mailUtil = new MailUtil();
-		
-		
-		Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
-		if(constraintViolations.size() > 0){
-			List<String> fieldErrors = new ArrayList<String>();
-			for(ConstraintViolation<User> c : constraintViolations){
-				fieldErrors.add(c.getMessage());
-			}
-			System.out.println(fieldErrors.size());
-			m.addObject("fieldErrors",fieldErrors);
-			return m;
-		}
-		try{
-			userService.createUser(user);
-			System.out.println(userService.getUserById(user.getId()));
-		}catch(DuplicateKeyException e){
-			return register(request,response);
-		}
-		mailUtil.send(user.getEmail(),user.getId(),user.getValidateCode());
-		return new ModelAndView(activate);
+	
+	
+	@RequestMapping("/hospitalList.html")
+	public ModelAndView hospitalList(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(hoslist);
+		hospitalService.generateList(request, response, m, "hospitals");
+		return m;
 	}
 	
-	@RequestMapping("/appointmentList.html")
-	public ModelAndView appointmentList(HttpServletRequest request,HttpServletResponse response){
-		ModelAndView m = new ModelAndView(list);
-		
-		m.addObject("appointments",appointmentDetailService.generateList(request, response));
+	@RequestMapping("/departmentList.html")
+	public ModelAndView departmentList(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(deptlist);
+		String s_hospitalid = (String)request.getParameter("hospitalId");
+		if(StringUtils.isBlank(s_hospitalid)){
+			departmentService.generateList(request, response, m, "departments");
+			return m;
+		}
+		long hospitalId;
+		try{
+			hospitalId = Long.parseLong(s_hospitalid);
+		}catch(Exception e){
+			return new ModelAndView("index");
+		}
+		departmentService.generateList(request, response, m, "departments",hospitalId);
 		return m;
 	}
 	
@@ -110,13 +91,14 @@ public class GeneralServlet {
 		String opType=(String)request.getParameter("opType");
 		if(StringUtils.isBlank(opType))
 		{
+			messageService.generateList(request, response, m, "messages");
 			return m;
 		}
 		Message message = new Message();
 		message.setId(UUID11.getRandomId());
 		message.setContent((String)request.getParameter("content"));
 		if(request.getSession().getAttribute("userInSession")!=null){
-			message.setAuthor((String)request.getSession().getAttribute("userInSession"));
+			message.setAuthor(((User)request.getSession().getAttribute("userInSession")).getUserName());
 		}else{
 			message.setAuthor("游客");
 		}
@@ -127,30 +109,11 @@ public class GeneralServlet {
 		}catch(DuplicateKeyException e){
 			return leaveAMessage(request,response);
 		}
+		
+		messageService.generateList(request, response, m, "messages");
 		return m;
 	}
-	
-	@RequestMapping("/checkUserName.html")
-	public void checkUserName(HttpServletRequest request,HttpServletResponse response) throws IOException{
-		String userName = (String)request.getParameter("userName");
-		response.setContentType("text/html; charset=utf-8");
-		PrintWriter pw = response.getWriter();
-		if(StringUtils.isBlank(userName)){
-			pw.write("<span style=\"color:red\">用户名为空！</span>");
-			pw.flush();
-			return;
-		}else if(userService.getUserByName(userName)!=null){
-			pw.write("<span style=\"color:red\">用户名已存在！</span>");
-			pw.flush();
-			return;
-		}else{
-			pw.write("<span style=\"color:green\">你可以使用该用户名！</span>");
-			pw.flush();
-			return;
-		}
-		
-	}
-	
+
 	@RequestMapping("/userActivate.html")
 	public ModelAndView userActivate(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(activate);
@@ -188,5 +151,10 @@ public class GeneralServlet {
 			m.addObject("message","激活失败！请重新注册");
 		}
 		return m;
+	}
+	
+	@RequestMapping("index")
+	public ModelAndView index(HttpServletRequest request,HttpServletResponse response){
+		return new ModelAndView(index);
 	}
 }

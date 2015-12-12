@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.springframework.web.servlet.ModelAndView;
 
 public  class GeneralService {
 	
@@ -19,7 +20,7 @@ public  class GeneralService {
 	public  int count() {
 		return 0;
 	}
-	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
+	public void generateList(HttpServletRequest request,HttpServletResponse response,ModelAndView m,String listName){
 		String s_pageNo = "0";
 		int pageNo = 0;
 		int pageSize = configLoader.getInt("page.pageSize");
@@ -34,9 +35,15 @@ public  class GeneralService {
 			pageNo = 0;
 		}
 		if(pageNo > totalPages){
-			pageNo = totalPages;
+			pageNo = totalPages-1;
 		}
 		List<?> list = selectByRange(pageNo * pageSize,pageSize);
-		return list;
+		m.addObject(listName,list);
+		m.addObject("pageNo",pageNo);
+		m.addObject("totalPages",totalPages);
+	}
+	
+	public String generateListInJson(){
+		return null;
 	}
 }

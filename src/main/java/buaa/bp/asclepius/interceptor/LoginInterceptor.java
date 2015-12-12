@@ -49,29 +49,9 @@ public class LoginInterceptor  extends HandlerInterceptorAdapter{
 				if(user == null){
 					System.out.println("redirected");
 					response.sendRedirect("/Asclepius/login.html");
-					return true;
 				}
-				//请求权限控制
-				if(url.contains("index")){
-					return true;
-				}/*else{
-					//获取请求action的name
-					String actionName = request.getRequestURI();
-					if(StringUtils.isBlank(actionName)){
-						response.sendRedirect("login.html");
-					}
-					actionName = actionName.substring(actionName.lastIndexOf("/")+1);
-					List<MenuList> permissionMenuList = (List)session.getAttribute("menuList");
-					if(permissionMenuList != null){
-						for(MenuList ml:permissionMenuList){
-							if(ml.getUrl().compareTo(actionName) == 0){
-								return true;
-							}
-						}
-					}
-					response.sendRedirect("login.lc");
-					return true;
-				}*/
+				return true;
+
 			}
 			return false;
 		}

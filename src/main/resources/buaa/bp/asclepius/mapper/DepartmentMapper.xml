@@ -7,27 +7,39 @@
 		<id property="departmentId" column="deptid" />
 		<result property="departmentName" column="deptname" />
 		<result property="description" column="description" />
-		<result property="hospitalId" column="hospitalid" />
+		<association property="hospital" javaType="buaa.bp.asclepius.model.Hospital">
+			<id property="hospitalId" column="hospitalid" />
+			<result property="hospitalName" column="hospitalname" />
+			<result property="description" column="hospitaldescription" />
+		</association>
 	</resultMap>
-	<select id="getAllDepartments" parameterType="long" resultMap="departmentMap">
+	
+	<select id="getDepartmentById" parameterType="long" resultMap="departmentMap">
 	    <![CDATA[
-	    	select * from department where hospitalid = #{hospitalid};
+	    	select A.deptid,A.deptname,A.description,
+	    		   B.hospitalid as hospitalid,B.hospitalname,B.description as hospitaldescription
+	    	from department A
+	    	join hospital B on A.hospitalid=B.hospitalid
+	    	where A.deptid=#{id};
 		]]>
 	</select>
-	<select id="getDepartmentById" resultMap="departmentMap">
+	<select id="getAllDepartments" parameterType="long" resultMap="departmentMap">
 	    <![CDATA[
-	    	select * from department where hospitalid = #{0} and deptid = #{1};
+	    	select A.deptid,A.deptname,A.description,
+	    		   B.hospitalid as hospitalid,B.hospitalname,B.description as hospitaldescription
+	    	from department A
+	    	join hospital B on A.hospitalid=B.hospitalid;
 		]]>
 	</select>
 	<insert id="createDepartment" parameterType="buaa.bp.asclepius.model.Department">
 	    <![CDATA[
 	    	insert into department(deptid,deptname,description,hospitalid)
-	    		values(#{departmentId},#{departmentName},#{description},#{hospitalId});
+	    		values(#{departmentId},#{departmentName},#{description},#{hospital.hospitalId});
 		]]>
 	</insert>
 	<update id="updateDepartment" parameterType="buaa.bp.asclepius.model.Department">
 		<![CDATA[
-	    	update department set deptname=#{departmentName},description=#{description},hospitalid=#{hospitalId}
+	    	update department set deptname=#{departmentName},description=#{description},hospitalid=#{hospital.hospitalId}
 	    		where deptid = #{departmentId};
 		]]>
 	</update>
@@ -43,7 +55,20 @@
 	</select>
 	<select id="selectByRange" resultMap="departmentMap">
 		<![CDATA[
-		    	select * from department limit #{0},#{1};
+		    select A.deptid,A.deptname,A.description,
+	    		   B.hospitalid as hospitalid,B.hospitalname,B.description as hospitaldescription
+	    	from department A
+	    	join hospital B on A.hospitalid=B.hospitalid
+	    	limit #{0},#{1};
+		]]>
+	</select>
+	<select id="getAllDepartmentsByHospital" parameterType="long" resultMap="departmentMap">
+		<![CDATA[
+		    	select A.deptid,A.deptname,A.description,
+	    		   B.hospitalid as hospitalid,B.hospitalname,B.description as hospitaldescription
+		    	from department A
+		    	join hospital B on A.hospitalid=B.hospitalid
+		    	where A.hospitalid=#{hospitalid};
 		]]>
 	</select>
 </mapper>

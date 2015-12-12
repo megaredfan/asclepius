@@ -9,28 +9,57 @@
 		<result property="sex" column="sex" />
 		<result property="level" column="level" />
 		<result property="description" column="description" />
-		<result property="departmentId" column="deptid" />
-		<result property="hospitalId" column="hospitalid" />
+		<association property="department" javaType="buaa.bp.asclepius.model.Department">
+			<id property="departmentId" column="departmentid" />
+			<result property="departmentName" column="departmentname" />
+			<result property="description" column="departmentdescription" />
+			<association property="hospital" javaType="buaa.bp.asclepius.model.Hospital">
+				<id property="hospitalId" column="hospitalid" />
+				<result property="hospitalName" column="hospitalname" />
+				<result property="description" column="hospitaldescription" />
+			</association>
+		</association>
 	</resultMap>
 	<select id="getAllDoctors" resultMap="doctorMap">
 	    <![CDATA[
-	    	select * from doctor;
+	    	select A.doctorid,A.name,A.sex,A.level,A.description,
+	    		   B.deptid as departmentid,B.deptname as departmentname,B.description as departmentdescription,
+	    		   C.hospitalid,C.hospitalname,C.description as hospitaldescription
+	    	from doctor A
+	    	join department B on A.deptid = B.deptid
+	    	join hospital C on A.hospitalid = C.hospitalid;
+		]]>
+	</select>
+	<select id="getDoctorsByDepartment" parameterType="long" resultMap="doctorMap">
+	    <![CDATA[
+	    	select A.doctorid,A.name,A.sex,A.level,A.description,
+	    		   B.deptid as departmentid,B.deptname as departmentname,B.description as departmentdescription,
+	    		   C.hospitalid,C.hospitalname,C.description as hospitaldescription
+	    	from doctor A
+	    	join department B on A.deptid = B.deptid
+	    	join hospital C on A.hospitalid = C.hospitalid where A.deptid = #{departmentId};
 		]]>
 	</select>
 	<select id="getDoctorById" parameterType="long" resultMap="doctorMap">
 	    <![CDATA[
-	    	select * from doctor where doctorid = #{doctorId};
+	    	select A.doctorid,A.name,A.sex,A.level,A.description,
+	    		   B.deptid as departmentid,B.deptname as departmentname,B.description as departmentdescription,
+	    		   C.hospitalid,C.hospitalname,C.description as hospitaldescription
+	    	from doctor A
+	    	join department B on A.deptid = B.deptid
+	    	join hospital C on A.hospitalid = C.hospitalid
+	    	where A.doctorid=#{id}; 
 		]]>
 	</select>
 	<insert id="createDoctor" parameterType="buaa.bp.asclepius.model.Doctor">
 	    <![CDATA[
 	    	insert into doctor(doctorid,name,sex,level,description,deptid,hospitalid)
-	    		values(#{doctorId},#{name},#{sex},#{level},#{description},#{departmentId},#{hospitalId});
+	    		values(#{doctorId},#{name},#{sex},#{level},#{description},#{department.departmentId},#{department.hospital.hospitalId});
 		]]>
 	</insert>
 	<update id="updateDoctor" parameterType="buaa.bp.asclepius.model.Doctor">
 		<![CDATA[
-	    	update doctor set name=#{name},sex=#{sex},level=#{level},description=#{description},deptid=#{departmentId},hospitalid=#{hospitalId}
+	    	update doctor set name=#{name},sex=#{sex},level=#{level},description=#{description},deptid=#{department.departmentId},hospitalid=#{department.hospital.hospitalId}
 	    		where doctorid = #{doctorId};
 		]]>
 	</update>

@@ -1,12 +1,10 @@
 package buaa.bp.asclepius.mapper;
 
-import java.util.List;
-
+import java.sql.Date;
 import buaa.bp.asclepius.model.AppointmentDetail;
 
 public interface AppointmentDetailMapper extends SQLRecord {
-	public List<AppointmentDetail> getAvailableAppointments();
-	public List<AppointmentDetail> getAvailableAppointmentsByRange(int start,int length);
+	public AppointmentDetail getAppointmentByConditions(long hospitalId,long departmentId,long doctorId,Date date,String time);
 	public AppointmentDetail getAppointmentById(long appointmentDetailId);
 	public int createAppointmentDetail(AppointmentDetail appointmentDetail);
 	public int updateAppointmentDetail(AppointmentDetail appointmentDetail);

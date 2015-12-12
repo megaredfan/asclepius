@@ -2,6 +2,10 @@ package buaa.bp.asclepius.mapper;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +22,7 @@ public class HospitalMapperTest {
 	}
 	
 	@Test
-	public void test(){
+	public void test() throws JsonProcessingException{
 		Hospital hospital = new Hospital();
 		hospital.setHospitalId(41216998636L);
 		hospital.setHospitalName("hopital1");
@@ -37,5 +41,9 @@ public class HospitalMapperTest {
 			System.out.println(h);
 		}
 		System.out.println(hospitalMapper.selectByRange(0, hospitalMapper.count()));
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String result = mapper.writeValueAsString(hospitalMapper.getAllHospitals());
+		System.out.println(result);
 	}
 }

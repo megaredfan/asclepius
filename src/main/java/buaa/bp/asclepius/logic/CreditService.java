@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
 import buaa.bp.asclepius.mapper.CreditMapper;
 import buaa.bp.asclepius.model.Credit;
@@ -38,7 +39,7 @@ public class CreditService extends GeneralService  {
 	public List<?> selectByRange(int start,int length) {
 		return creditMapper.selectByRange(start, length);
 	}
-	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
-		return super.generateList(request, response);
+	public void generateList(HttpServletRequest request,HttpServletResponse response,ModelAndView m,String listName){
+		super.generateList(request, response,m,listName);
 	}
 }

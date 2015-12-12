@@ -2,6 +2,8 @@ package buaa.bp.asclepius.model;
 
 import java.sql.Timestamp;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 public class Appointment {
@@ -10,10 +12,10 @@ public class Appointment {
 	private int status;
 	@NotBlank(message="患者姓名不能为空！")private String patientName;
 	private String patientSex;
-	@NotBlank(message="患者年龄不能为空！")private int patientAge;
+	@NotNull(message="患者年龄不能为空！")private int patientAge;
 	private String patientInsuranceNo;
 	private long userId;
-	@NotBlank(message="预约失败！请重新预约")private long appointmentDetailId;
+	@NotNull(message="预约失败！请重新预约")private long appointmentDetailId;
 	
 	public static final int WAITING_FOR_PAYING = 1;
 	public static final int NOT_PAYED = 2;

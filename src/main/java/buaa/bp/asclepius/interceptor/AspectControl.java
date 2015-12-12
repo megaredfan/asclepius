@@ -50,38 +50,38 @@ public class AspectControl {
 	@Pointcut("execution(* myAppointments(..))")
 	public void beforeMyAppointments(){}
 	
+	@Pointcut("execution(* account(..))")
+	public void account(){}
+	
 	@Pointcut("execution(* print(..))")
 	public void afterPrint(){}
 	
 	@Pointcut("execution(* makeAnAppointment(..))")
 	public void afterMakingAnAppointment(){};
 	
-	@Around(value="aspectjMethod()")
-	public Object aroundAdvice(ProceedingJoinPoint pjp)throws Throwable{
-
-		return pjp.proceed();
+	@Before(value="aspectjMethod()")
+	public void aroundAdvice(){
+		System.out.println("before selectByRange");
+		
 	}
+
 	
-	@Before(value="beforeMyAppointments()")
+	@Before(value="account()")
 	public void checkAppointments(JoinPoint jp) throws Throwable{
+		System.out.println("ascpect controlling...");
 		//检查用户所有预约的状态，对未支付，未打印等状态进行处理
 		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
 		
 		long userId;
 		
-		String s_id = (String)request.getParameter("userId");
-		if(StringUtils.isBlank(s_id))
-		{
-			logger.info("用户id为空.");
-			return;
-		}
 		try{
-			userId = Long.parseLong(s_id);
+			userId = ((User)request.getSession().getAttribute("userInSession")).getId();
 		}catch(Exception e){
-			logger.error("用户id转换失败.",e);
+			logger.error("用户session为空.",e);
 			return;
 		}
+		
 		List<Appointment> list = appointmentService.getAllAppointments(userId);
 		for(Appointment app : list)
 		{
@@ -89,10 +89,12 @@ public class AspectControl {
 				long passed = System.currentTimeMillis()-app.getTime().getTime();
 				if((passed/1000/60)>45 && app.getStatus()==Appointment.WAITING_FOR_PAYING){
 					app.setStatus(Appointment.NOT_PAYED);
+					appointmentService.updateAppointment(app);
 				}
 				long time = appointmentDetailService.getAppointmentById(app.getAppointmentDetailId()).getDate().getTime();
 				if(System.currentTimeMillis()>time && app.getStatus()==Appointment.WAITING_FOR_PRINTING){
 					app.setStatus(Appointment.NOT_PAYED);
+					appointmentService.updateAppointment(app);
 				}
 			}catch(Exception e){
 				logger.error(e);
@@ -106,7 +108,6 @@ public class AspectControl {
 		//保存出诊记录，进行信用评级等操作
 		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
-		//CreditLog creditLog = new CreditLog();
 		User user = userService.getUserById(Long.parseLong(request.getParameter("userId")));
 		user.setCreditLevel(user.getCreditLevel()+1);
 		Credit credit = new Credit();

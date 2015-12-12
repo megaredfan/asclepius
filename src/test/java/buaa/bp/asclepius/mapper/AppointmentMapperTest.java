@@ -18,7 +18,7 @@ public class AppointmentMapperTest {
 	
 	@Before
 	public void before(){
-		Assert.assertEquals(1, appointmentMapper.deleteAppoinement(41216998636L));
+		Assert.assertEquals(1, appointmentMapper.deleteAppointment(41216998636L));
 	}
 	
 	@Test

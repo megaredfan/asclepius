@@ -47,7 +47,7 @@ public class MessageMapperTest {
 		{
 			System.out.println(m);
 		}
-		for(Message m : messageMapper.getMessagesById(41216998636L))
+		for(Message m : messageMapper.getMessagesByPid(41216998636L))
 		{
 			System.out.println(m);
 		}

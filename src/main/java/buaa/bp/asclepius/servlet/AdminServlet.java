@@ -1,8 +1,12 @@
 package buaa.bp.asclepius.servlet;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -18,6 +22,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import buaa.bp.asclepius.logic.AppointmentDetailService;
 import buaa.bp.asclepius.logic.DepartmentService;
 import buaa.bp.asclepius.logic.DoctorService;
@@ -25,7 +32,6 @@ import buaa.bp.asclepius.logic.HospitalService;
 import buaa.bp.asclepius.logic.MessageService;
 import buaa.bp.asclepius.logic.SystemAdminService;
 import buaa.bp.asclepius.logic.UserService;
-import buaa.bp.asclepius.model.AppointmentDetail;
 import buaa.bp.asclepius.model.Department;
 import buaa.bp.asclepius.model.Doctor;
 import buaa.bp.asclepius.model.Hospital;
@@ -40,7 +46,8 @@ public class AdminServlet {
 	
 	private static final String admin = "admin/index";
 	private static final String login = "admin/login";
-	private static final String message = "admin/message";
+	private static final String message = "admin/messages";
+	private static final String reply = "admin/reply";
 	private static final String applist = "admin/applist";
 	private static final String appedit = "admin/appedit";
 	private static final String deptlist = "admin/deptlist";
@@ -108,97 +115,108 @@ public class AdminServlet {
 		return new ModelAndView(admin);
 	}
 	
+	@RequestMapping("/messages.html")
+	public ModelAndView messages(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = new ModelAndView(message);		
+		m.addObject("messages",messageService.getUnReplyedMessages());
+		return m;
+	}
+	
 	@RequestMapping("/reply.html")
 	public ModelAndView reply(HttpServletRequest request,HttpServletResponse response){
-		ModelAndView m = new ModelAndView(message);
+		ModelAndView m = new ModelAndView(reply);
+		String s_id = (String)request.getParameter("id");
 		String opType=(String)request.getParameter("opType");
+		long id;
 		if(StringUtils.isBlank(opType))
 		{
-			return m;
+			try{
+				id = Long.parseLong(s_id);
+				Message msg = messageService.getMessageById(id);
+				m.addObject("message",msg);
+			}catch(Exception e){
+				return messages(request,response);
+			}
 		}
-		Message message = new Message();
-		String s_pid = (String)request.getParameter("pid");
-		try{
-			message.setPid(Long.parseLong(s_pid));
-			message.setId(UUID11.getRandomId());
-			message.setAuthor(((String)request.getSession().getAttribute("adminInSession")));
-			message.setContent((String)request.getParameter("content"));
-			message.setCreateTime(new Timestamp(System.currentTimeMillis()));
-			
-			messageService.createMessage(message);
-		}catch(NumberFormatException | DuplicateKeyException e){
-			return m;
+		if(!StringUtils.isBlank(opType))
+		{
+			Message message = new Message();
+			String s_pid = (String)request.getParameter("pid");
+			try{
+				message.setPid(Long.parseLong(s_pid));
+				message.setId(UUID11.getRandomId());
+				message.setAuthor(((String)request.getSession().getAttribute("adminInSession")));
+				message.setContent((String)request.getParameter("content"));
+				message.setCreateTime(new Timestamp(System.currentTimeMillis()));
+				messageService.createMessage(message);
+				return messages(request,response);
+			}catch(NumberFormatException | DuplicateKeyException e){
+				return messages(request,response);
+			}
 		}
-		
-		m.addObject("messages",messageService.generateList(request, response));
 		return m;
 	}
 		
 	@RequestMapping("/appointmentDetailList.html")
 	public ModelAndView appointmentDetailList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(applist);
-		m.addObject("appointments",appointmentDetailService.generateList(request, response));
+		appointmentDetailService.generateList(request, response, m, "appointments");
 		return m;
 	}
 	
-	@RequestMapping("/addNewAppointment.html")
-	public ModelAndView appointmentDetailAdd(HttpServletRequest request,HttpServletResponse response){
-		//TODO:实现可自动化发布
-		ModelAndView m = new ModelAndView(appedit);
-		AppointmentDetail appointmentDetail = new AppointmentDetail();
-		
+	@RequestMapping("/appointmentPoolEdit.html")
+	public ModelAndView appointmentPoolEdit(HttpServletRequest request,HttpServletResponse response){
+		ModelAndView m = null;
 		String opType = (String)request.getParameter("opType");
-		int amount;
-		Timestamp start,end,date;
-		long deptId,doctorId,hospitalId;
+		String s_hos = (String)request.getParameter("hospitalId");
+		String s_dep = (String)request.getParameter("departmentId");
+		
 		if(StringUtils.isBlank(opType))
 		{
-				return appointmentDetailList(request,response);
-		}
-		try {
-			amount = Integer.parseInt(request.getParameter("amout"));
-			start = Timestamp.valueOf((String)request.getParameter("start"));
-			end = Timestamp.valueOf((String)request.getParameter("end"));
-			date = Timestamp.valueOf((String)request.getParameter("date"));
-			deptId = Long.parseLong(request.getParameter("departmentId"));
-			doctorId = Long.parseLong(request.getParameter("docotrId"));
-			hospitalId = Long.parseLong(request.getParameter("hospitalId"));
-			
-		} catch (Exception e) {
-			return appointmentDetailList(request,response); 
+			if(StringUtils.isBlank(s_hos)&&StringUtils.isBlank(s_dep)){
+				m = new ModelAndView(appedit); 
+				m.addObject("hospitals",hospitalService.getAllHospitals());
+				System.out.println("hos & dep is blank.");
+				return m;
+			}
+			if(StringUtils.isBlank(s_dep)&&!StringUtils.isBlank(s_hos)){
+				m = new ModelAndView("admin/deptoption");
+				System.out.println("dep is blank.");
+				try{
+					m.addObject("departments",departmentService.getAllDepartmentsByHospital(Long.parseLong(s_hos)));
+				}catch(NumberFormatException e){
+					return m;
+				}catch(Exception e){
+					m = new ModelAndView(appedit);
+					m.addObject("hospitals",hospitalService.getAllHospitals());
+					System.out.println("dep is blank.but there is a exception.");
+					e.printStackTrace();
+				}
+				return m;
+			}
+			if(!StringUtils.isBlank(s_dep)&&StringUtils.isBlank(s_hos)){
+				m = new ModelAndView("admin/docoption");
+				System.out.println("hos is blank.");
+				try{
+					m.addObject("doctors",doctorService.getDoctorsByDepartment(Long.parseLong(s_dep)));
+				}catch(NumberFormatException e){
+					return m;
+				}catch(Exception e){
+					m = new ModelAndView(appedit);
+					m.addObject("hospitals",hospitalService.getAllHospitals());
+					System.out.println("hos is blank.but there is a exception.");
+					e.printStackTrace();
+				}
+				return m;
+			}
 		}
 		
-		appointmentDetail.setAppdetailId(UUID11.getRandomId());
-		appointmentDetail.setAmount(amount);
-		appointmentDetail.setDate(date);
-		appointmentDetail.setDeptId(deptId);
-		appointmentDetail.setDoctorId(doctorId);
-		appointmentDetail.setEnd(end);
-		appointmentDetail.setHospitalId(hospitalId);
-		appointmentDetail.setStart(start);		
-		Set<ConstraintViolation<AppointmentDetail>> constraintViolations = validator.validate(appointmentDetail);
-		if(constraintViolations.size() > 0){
-			List<String> fieldErrors = new ArrayList<String>();
-			for(ConstraintViolation<AppointmentDetail> c : constraintViolations){
-				fieldErrors.add(c.getMessage());
-			}
-			System.out.println(fieldErrors.size());
-			m.addObject("fieldErrors",fieldErrors);
-			return m;
-		}
-		try{
-			appointmentDetailService.createAppointmentDetail(appointmentDetail);
-		}catch(DuplicateKeyException e){
-			appointmentDetailAdd(request, response);
-		}
-		return new ModelAndView(userlist);			
+		return m;
 	}
-
+	
 	@RequestMapping("/departmentList.html")
 	public ModelAndView departmentList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(deptlist);
-		
-		m.addObject("departments",departmentService.generateList(request, response));
 		return m;
 	}
 
@@ -214,7 +232,7 @@ public class AdminServlet {
 		if(StringUtils.isBlank(opType)&&StringUtils.isBlank(s_departmentId)&&!StringUtils.isBlank(s_hospitalId))
 		{
 			try{
-				department = departmentService.getDepartmentById(Long.parseLong(s_hospitalId),Long.parseLong(s_departmentId));
+				department = departmentService.getDepartmentById(Long.parseLong(s_departmentId));
 				m.addObject("department",department);
 			}catch(Exception e){
 				return new ModelAndView(deptlist);
@@ -226,7 +244,7 @@ public class AdminServlet {
 			if(opType.compareTo("edit")==0)
 			{
 					try{
-						department = departmentService.getDepartmentById(Long.parseLong(s_hospitalId),Long.parseLong(s_departmentId));
+						department = departmentService.getDepartmentById(Long.parseLong(s_departmentId));
 					}catch(Exception e){
 						return new ModelAndView(deptlist);
 					}
@@ -249,7 +267,7 @@ public class AdminServlet {
 			}else if(opType.compareTo("add")==0) {
 				department.setDepartmentId(UUID11.getRandomId());
 				try {
-					department.setHospitalId(Long.parseLong(s_hospitalId));
+					department.setHospital(hospitalService.getHostpitalById(Long.parseLong(s_hospitalId)));
 				} catch (Exception e) {
 					return m;
 				}
@@ -300,7 +318,7 @@ public class AdminServlet {
 	public ModelAndView hospitalList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(hosList);
 
-		m.addObject("hospitals",hospitalService.generateList(request, response));
+		hospitalService.generateList(request, response, m, "hospitals");
 		return m;
 	}
 
@@ -392,8 +410,6 @@ public class AdminServlet {
 	@RequestMapping("/doctorList.html")
 	public ModelAndView doctorList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(doctorlist);
-		
-		m.addObject("doctors",doctorService.generateList(request, response));
 		return m;
 	}
 
@@ -401,7 +417,7 @@ public class AdminServlet {
 	public ModelAndView doctorEdit(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(doctorEdit);
 		Doctor doctor = new Doctor();
-		long hospitalId,departmentId;
+		long departmentId;
 		
 		String opType = (String)request.getParameter("opType");
 		String s_doctorId = (String)request.getParameter("departmentId");
@@ -420,7 +436,6 @@ public class AdminServlet {
 		{
 			try{
 				departmentId = Long.parseLong(request.getParameter("departmentId"));
-				hospitalId = Long.parseLong(request.getParameter("hospitalId"));
 			}catch(Exception e){
 				return new ModelAndView(doctorlist);
 			}
@@ -432,9 +447,8 @@ public class AdminServlet {
 						return new ModelAndView(doctorlist);
 					}
 					
-					doctor.setDepartmentId(departmentId);
+					doctor.setDepartment(departmentService.getDepartmentById(departmentId));
 					doctor.setDescription((String)request.getParameter("description"));
-					doctor.setHospitalId(hospitalId);
 					doctor.setLevel((String)request.getParameter("level"));
 					doctor.setName((String)request.getParameter("name"));
 					doctor.setSex((String)request.getParameter("sex"));
@@ -452,11 +466,10 @@ public class AdminServlet {
 				
 				
 			}else if(opType.compareTo("add")==0) {
-				doctor.setDepartmentId(UUID11.getRandomId());
+				doctor.setDoctorId(UUID11.getRandomId());
 
-				doctor.setDepartmentId(departmentId);
+				doctor.setDepartment(departmentService.getDepartmentById(departmentId));
 				doctor.setDescription((String)request.getParameter("description"));
-				doctor.setHospitalId(hospitalId);
 				doctor.setLevel((String)request.getParameter("level"));
 				doctor.setName((String)request.getParameter("name"));
 				doctor.setSex((String)request.getParameter("sex"));
@@ -499,12 +512,9 @@ public class AdminServlet {
 		return doctorList(request, response);
 	}
 	
-	
 	@RequestMapping("/userList.html")
 	public ModelAndView userList(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(userlist);
-
-		m.addObject("users",userService.generateList(request, response));
 		return m;
 	}
 	
@@ -606,5 +616,67 @@ public class AdminServlet {
 		
 		return userList(request,response);
 	}
+
+	@RequestMapping("/users.json")
+	public void usersJson(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter pw = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+		List<?> users = userService.getAllUsers();
+		pw.write(mapper.writeValueAsString(users));
+		return;
+	}
 	
+	@RequestMapping("/hospitals.json")
+	public void hospitalsJson(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter pw = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+		List<?> hospitals = hospitalService.getAllHospitals();
+		pw.write(mapper.writeValueAsString(hospitals));
+		return;
+	}
+	
+	@RequestMapping("/departments.json")
+	public void departmentsJson(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter pw = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+		List<LinkedHashMap<String,String>> departments = new ArrayList<LinkedHashMap<String,String>>();
+		for(Department d : departmentService.getAllDepartments()){
+			LinkedHashMap<String, String> m = new LinkedHashMap<String,String>();
+			m.put("departmentId", String.valueOf(d.getDepartmentId()));
+			m.put("departmentName", d.getDepartmentName());
+			m.put("description", d.getDescription());
+			m.put("hospitalName",d.getHospital().getHospitalName());
+			departments.add(m);
+		}
+		pw.write(mapper.writeValueAsString(departments));
+		return;
+	}
+	
+	@RequestMapping("/doctors.json")
+	public void doctorsJson(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter pw = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+		List<LinkedHashMap<String,String>> doctors = new ArrayList<LinkedHashMap<String,String>>();
+		for(Doctor d : doctorService.getAllDoctors()){
+			LinkedHashMap<String, String> m = new LinkedHashMap<String,String>();
+			m.put("doctorId", String.valueOf(d.getDoctorId()));
+			m.put("doctorName", d.getName());
+			m.put("doctorSex", d.getSex());
+			m.put("doctorLevel", d.getLevel());
+			m.put("description", d.getDescription());
+			m.put("department", d.getDepartment().getDepartmentName());
+			m.put("hospital", d.getDepartment().getHospital().getHospitalName());
+			doctors.add(m);
+		}
+		pw.write(mapper.writeValueAsString(doctors));
+		return;
+	}
 }

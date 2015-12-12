@@ -15,9 +15,21 @@
 	    	select * from message where pid = 0 order by createtime desc;
 		]]>
 	</select>
-	<select id="getMessagesById" parameterType="long" resultMap="messageMap">
+	<select id="getMessagesByPid" parameterType="long" resultMap="messageMap">
 	    <![CDATA[
 	    	select * from message where pid = #{pid} order by createtime desc;
+		]]>
+	</select>
+	<select id="getUnReplyedMessages" resultMap="messageMap">
+	    <![CDATA[
+	    	select * from message where pid=0
+	    	 	and id not in
+	    		(select pid from message where pid <> 0);
+		]]>
+	</select>
+	<select id="getMessageById" parameterType="long" resultMap="messageMap">
+	    <![CDATA[
+	    	select * from message where id= #{id};
 		]]>
 	</select>
 	<insert id="createMessage" parameterType="buaa.bp.asclepius.model.Message">
@@ -44,7 +56,7 @@
 	</select>
 	<select id="selectByRange" resultMap="messageMap">
 		<![CDATA[
-		    	select * from message limit #{0},#{1};
+		    	select * from message where pid = 0 order by createtime desc limit #{0},#{1};
 		]]>
 	</select>
 </mapper>

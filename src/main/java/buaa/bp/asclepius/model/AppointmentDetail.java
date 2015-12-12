@@ -1,12 +1,11 @@
 package buaa.bp.asclepius.model;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 
 public class AppointmentDetail {
 	private long appdetailId;
-	private Timestamp start;
-	private Timestamp end;
-	private Timestamp date;
+	private Date date;
+	private String time;
 	private int amount;
 	private long doctorId;
 	private long deptId;
@@ -18,23 +17,17 @@ public class AppointmentDetail {
 	public void setAppdetailId(long appdetailId) {
 		this.appdetailId = appdetailId;
 	}
-	public Timestamp getStart() {
-		return start;
-	}
-	public void setStart(Timestamp start) {
-		this.start = start;
-	}
-	public Timestamp getEnd() {
-		return end;
-	}
-	public void setEnd(Timestamp end) {
-		this.end = end;
-	}
-	public Timestamp getDate() {
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(Timestamp date) {
+	public void setDate(Date date) {
 		this.date = date;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
 	}
 	public int getAmount() {
 		return amount;
@@ -60,11 +53,10 @@ public class AppointmentDetail {
 	public void setHospitalId(long hospitalId) {
 		this.hospitalId = hospitalId;
 	}
-	
 	@Override
 	public String toString() {
-		return "AppointmentDetail [appdetailId=" + appdetailId + ", start=" + start + ", end=" + end + ", date=" + date
-				+ ", amount=" + amount + ", doctorId=" + doctorId + ", deptId=" + deptId + ", hospitalId=" + hospitalId
-				+ "]";
-	}			
+		return "AppointmentDetail [appdetailId=" + appdetailId + ", date=" + date + ", time=" + time + ", amount="
+				+ amount + ", doctorId=" + doctorId + ", deptId=" + deptId + ", hospitalId=" + hospitalId + "]";
+	}
+	
 }

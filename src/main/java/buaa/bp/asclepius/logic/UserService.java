@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.servlet.ModelAndView;
 
 import buaa.bp.asclepius.mapper.UserMapper;
 import buaa.bp.asclepius.model.User;
@@ -47,8 +47,8 @@ public class UserService extends GeneralService {
 	public List<?> selectByRange(int start,int length) {
 		return userMapper.selectByRange(start, length);
 	}
-	public List<?> generateList(HttpServletRequest request,HttpServletResponse response){
-		return super.generateList(request, response);
+	public void generateList(HttpServletRequest request,HttpServletResponse response,ModelAndView m,String listName){
+		super.generateList(request, response,m,listName);
 	}
 	/**
 	 * 验证用户名密码并且返回用户权限值

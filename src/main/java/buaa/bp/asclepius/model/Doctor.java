@@ -6,8 +6,7 @@ public class Doctor {
 	private String sex;
 	private String level;//职称
 	private String description;
-	private long departmentId;
-	private long hospitalId;
+	private Department department;
 	
 	public long getDoctorId() {
 		return doctorId;
@@ -39,25 +38,17 @@ public class Doctor {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public long getDepartmentId() {
-		return departmentId;
+	public Department getDepartment() {
+		return department;
 	}
-	public void setDepartmentId(long departmentId) {
-		this.departmentId = departmentId;
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
-	public long getHospitalId() {
-		return hospitalId;
-	}
-	public void setHospitalId(long hospitalId) {
-		this.hospitalId = hospitalId;
-	}
-	
+
 	@Override
 	public String toString() {
 		return "Doctor [doctorId=" + doctorId + ", name=" + name + ", sex=" + sex + ", level=" + level
-				+ ", description=" + description + ", departmentId=" + departmentId + ", hospitalId=" + hospitalId
-				+ "]";
+				+ ", description=" + description + ", department=" + department + "]";
 	}
-	
 	
 }

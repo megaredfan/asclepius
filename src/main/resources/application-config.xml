@@ -4,18 +4,18 @@
     xmlns:p="http://www.springframework.org/schema/p" 
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd 
-		http://www.springframework.org/schema/aop 
-        http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+        http://www.springframework.org/schema/tx
+ 		http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
         
     <context:component-scan base-package="buaa.bp.asclepius"/>
-    
-    <aop:aspectj-autoproxy />
-    <bean class="buaa.bp.asclepius.interceptor.AspectControl" />
     
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 		<property name="locations">
@@ -39,7 +39,14 @@
 		<property name="validationQuery" value="${jdbc.admin.validationQuery}" />
 		<property name="testWhileIdle" value="${jdbc.admin.testWhileIdle}" />
 	</bean>
-
+	
+	<bean id="txManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource_asclepius" />  
+    </bean>  
+  
+    <tx:annotation-driven transaction-manager="txManager" />
+	
 	<bean id="sqlSessionFactoryAsclepius" name = "sqlSessionFactoryAsclepius" class="org.mybatis.spring.SqlSessionFactoryBean">
 	  <!--   <property name="configLocation" value="classpath:mybatis-config.xml" /> -->
 		<property name="dataSource" ref="dataSource_asclepius" />
@@ -58,4 +65,25 @@
     <bean name="configLoader" class="org.apache.commons.configuration.PropertiesConfiguration">
     	<constructor-arg value="config.properties" />
     </bean>
+    
+    <!-- 定时任务配置 -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+       <property name="triggers">  
+           <list>  
+              <ref bean="poolTrigger"/>  
+           </list>  
+       </property>  
+       <property name="autoStartup" value="true"/>  
+	</bean>
+	<bean id="poolTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
+       <property name="jobDetail" ref="poolJobDetail"/>  
+       <property name="cronExpression" value="0 0 1 ? * L"/><!-- 每周星期天凌晨1点实行一次 -->  
+	</bean>  
+	<bean id="generatePool" class="buaa.bp.asclepius.utils.SchedulingUtil" />
+	<bean id="poolJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="generatePool"/>  
+        <property name="targetMethod" value="execute"/>  
+        <property name="concurrent" value="false"/>
+        <!-- 是否允许任务并发执行。当值为false时，表示必须等到前一个线程处理完毕后才再启一个新的线程 -->  
+	</bean>   
 </beans>
