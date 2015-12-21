@@ -22,14 +22,14 @@ public class DepartmentMapperTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");
 	DepartmentMapper departmentMapper = context.getBean("departmentMapper",DepartmentMapper.class);
 	
-	@Before
+	//@Before
 	public void before(){
 		Assert.assertEquals(1, departmentMapper.deleteDepartment(41216998636L));
 	}
 	
 	@Test
 	public void test() throws JsonProcessingException{
-		Department department = new Department();
+		/*Department department = new Department();
 		department.setDepartmentId(41216998636L);
 		department.setDepartmentName("外科");
 		department.setDescription("描述：外科");
@@ -49,7 +49,7 @@ public class DepartmentMapperTest {
 			System.out.println(d);
 		}
 		System.out.println(departmentMapper.selectByRange(0, departmentMapper.count()));
-		List<Map> departments = new ArrayList<Map>();
+		List<Map<String,Object>> departments = new ArrayList<Map<String,Object>>();
 		for(Department d : departmentMapper.getAllDepartmentsByHospital(41216998636L)){
 			Map<String,Object> m = new LinkedHashMap<String,Object>();
 			m.put("departmentId", d.getDepartmentId());
@@ -60,6 +60,12 @@ public class DepartmentMapperTest {
 		}
 		ObjectMapper mapper = new ObjectMapper();
 		String result = mapper.writeValueAsString(departments);
-		System.out.println(result);
+		System.out.println(result);*/
+		for(Department d : departmentMapper.getTopDepartments(4))
+		{
+			System.out.println(d);
 		}
+		}
+		
+	
 }

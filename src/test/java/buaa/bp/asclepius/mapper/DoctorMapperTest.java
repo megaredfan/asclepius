@@ -14,7 +14,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import buaa.bp.asclepius.model.Department;
 import buaa.bp.asclepius.model.Doctor;
 
 public class DoctorMapperTest {

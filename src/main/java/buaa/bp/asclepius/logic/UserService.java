@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,30 +22,35 @@ public class UserService extends GeneralService {
 
 	@Resource(name="userMapper")
 	private UserMapper userMapper;
-	
+	@Cacheable(value="user")
 	public List<User> getAllUsers() {
 		return userMapper.getAllUsers();
 	}
+	@Cacheable(value="user")
 	public User getUserById(long id) {
 		return userMapper.getUserById(id);
 	}
+	@CacheEvict(value="user")
 	public int createUser(User user) {
 		user.setPassword(this.getMD5(user.getPassword()));
 		return userMapper.createUser(user);
 	}
+	@CacheEvict(value="user")
 	public int updateUser(User user) {
-		user.setPassword(this.getMD5(user.getPassword()));
 		return userMapper.updateUser(user);
 	}
+	@CacheEvict(value="user")
 	public int deleteUser(long id) {
 		return userMapper.deleteUser(id);
 	}
+	@Cacheable(value="user")
 	public User getUserByName(String name) {
 		return userMapper.getUserByName(name);
 	}
 	public int count() {
 		return userMapper.count();
 	}
+	@Cacheable(value="user")
 	public List<?> selectByRange(int start,int length) {
 		return userMapper.selectByRange(start, length);
 	}

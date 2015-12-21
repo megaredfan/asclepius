@@ -45,6 +45,7 @@ import buaa.bp.asclepius.utils.TimeUtil;
 @RequestMapping("/registed")
 public class RegistedServlet {
 	private static final String account = "registed/account";
+	private static final String edit = "registed/edit";
 	private static final String pay = "registed/pay";
 	private static final String makeAppointment = "registed/makeAppointment";
 	private static final String afterbook = "registed/afterbook";
@@ -90,6 +91,46 @@ public class RegistedServlet {
 		return m;
 	}
 	
+	@RequestMapping("/editProfile.html")
+	public ModelAndView editProfile(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		ModelAndView m = new ModelAndView(edit);
+		User user = (User) request.getSession().getAttribute("userInSession");
+		if(user==null){
+			response.sendRedirect("../login.html");
+			return null;
+		}
+		String opType = (String)request.getParameter("opType");
+		if(StringUtils.isBlank(opType))
+		{
+			m.addObject("user",user);
+			return m;
+		}
+		if(!StringUtils.isBlank(opType))
+		{
+			
+			user.setUserName((String)request.getParameter("userName"));
+			user.setRealName((String)request.getParameter("realName"));
+			user.setSex((String)request.getParameter("sex"));
+			user.setIdNo((String)request.getParameter("idNo"));
+			Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+			if(constraintViolations.size() > 0){
+				List<String> fieldErrors = new ArrayList<String>();
+				for(ConstraintViolation<User> c : constraintViolations){
+					fieldErrors.add(c.getMessage());
+				}
+				System.out.println(fieldErrors.size());
+				m.addObject("fieldErrors",fieldErrors);
+				return m;
+			}
+				userService.updateUser(user);
+				request.getSession().setAttribute("userInSession", user);
+				response.sendRedirect("myAccount.html");
+				return null;
+		}
+		return m;
+	}
+	
+	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED) 
 	@RequestMapping("/myAppointments.html")
 	public ModelAndView myAppointments(HttpServletRequest request,HttpServletResponse response) throws IOException{
@@ -124,8 +165,7 @@ public class RegistedServlet {
 			appointmentId = Long.parseLong(s_appointmentid);
 			appointmentDetailId = Long.parseLong(s_appointmentdetailid);
 
-			long userId = ((User)request.getSession().getAttribute("userInSession")).getId();
-			appointment = appointmentService.getAppointmentById(userId, appointmentId);
+			appointment = appointmentService.getAppointmentById(appointmentId);
 			appointmentDetail = appointmentDetailService.getAppointmentById(appointmentDetailId);
 		}catch(Exception e){
 			response.sendRedirect("myAppointments.html");
@@ -134,6 +174,10 @@ public class RegistedServlet {
 		
 		m.addObject("appointment",appointment);
 		m.addObject("appointmentDetail",appointmentDetail);
+		Doctor doctor = doctorService.getDoctorById(appointmentDetail.getDoctorId());
+		m.addObject("doctor",doctor.getName());
+		m.addObject("department",doctor.getDepartment().getDepartmentName());
+		m.addObject("hospital",doctor.getDepartment().getHospital().getHospitalName());
 		return m;
 	}
 	
@@ -241,7 +285,11 @@ public class RegistedServlet {
 			return account(request, response) ;
 		}
 		try{
-			appointmentService.deleteAppointment(Long.parseLong(s_appid));
+			Appointment app = appointmentService.getAppointmentById(Long.parseLong(s_appid));
+			AppointmentDetail appdetail = appointmentDetailService.getAppointmentById(app.getAppointmentDetailId());
+			appdetail.setAmount(appdetail.getAmount()+1);
+			appointmentDetailService.updateAppointmentDetail(appdetail);
+			appointmentService.deleteAppointment(app.getAppointmentId());
 		}catch(Exception e){
 			System.out.println("exception");
 			return account(request, response);
@@ -304,13 +352,13 @@ public class RegistedServlet {
 	}
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED) 
-	@RequestMapping("/payConfirmed.html")
-	public boolean payConfirmed(HttpServletRequest request){
-		String trade_status = (String)request.getParameter("trade_status");//交易状态
-		/*String trade_no = request.getParameter("trade_no"); // 支付宝交易号
+	@RequestMapping("/payConfirm.html")
+	public void payConfirmed(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		/*String trade_status = (String)request.getParameter("trade_status");//交易状态
+		String trade_no = request.getParameter("trade_no"); // 支付宝交易号
         String order_no = request.getParameter("out_trade_no"); // 获取订单号
         String total_fee = request.getParameter("price"); // 获取总金额
-*/
+
         String subject = "";
         try {
         	subject = new String(request.getParameter("subject").getBytes(
@@ -320,24 +368,25 @@ public class RegistedServlet {
         		e1.printStackTrace();
         		}// 商品名称、订单名称,保存用户id和预约id
       
-        /*if (request.getParameter("body") != null) {
+        if (request.getParameter("body") != null) {
         	try {
         		String body = new String(request.getParameter("body").getBytes(
                                  "ISO-8859-1"), "UTF-8");
         		} catch (UnsupportedEncodingException e) {
         			e.printStackTrace();
         			}// 商品描述、订单备注、描述
-                }*/
+                }
 		if(trade_status.compareTo("WAIT_SELLER_SEND_GOODS") == 0 ||
-				trade_status.compareTo("TRADE_FINISHED") == 0)
-		{
-			String[] str = subject.split(",");
-			long userId = Long.parseLong(str[0]);
-			long appointmentId = Long.parseLong(str[1]);
-			Appointment app = appointmentService.getAppointmentById(userId, appointmentId);
+				trade_status.compareTo("TRADE_FINISHED") == 0)*/
+		
+			String str = (String)request.getParameter("appointmentId");
+			long appointmentId = Long.parseLong(str);
+			Appointment app = appointmentService.getAppointmentById(appointmentId);
 			app.setStatus(Appointment.WAITING_FOR_PRINTING);
-			return true;
-		}
-		return false;
+			appointmentService.updateAppointment(app);
+			
+		
+		response.sendRedirect("myAccount.html");
+		return;
 	}
 }

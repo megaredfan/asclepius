@@ -23,12 +23,23 @@
 	    	where A.deptid=#{id};
 		]]>
 	</select>
-	<select id="getAllDepartments" parameterType="long" resultMap="departmentMap">
+	<select id="getAllDepartments" resultMap="departmentMap">
 	    <![CDATA[
 	    	select A.deptid,A.deptname,A.description,
 	    		   B.hospitalid as hospitalid,B.hospitalname,B.description as hospitaldescription
 	    	from department A
 	    	join hospital B on A.hospitalid=B.hospitalid;
+		]]>
+	</select>
+	<select id="getTopDepartments" parameterType="int" resultMap="departmentMap">
+	    <![CDATA[
+	    	select A.deptid,A.deptname,A.description,
+	    		   B.hospitalid as hospitalid,B.hospitalname,B.description as hospitaldescription
+	    	from department A
+	    	join hospital B on A.hospitalid=B.hospitalid
+	    	where A.deptid in
+	    	(select deptid from doctor group by deptid order by count(doctorid))
+	    	limit 0,#{capacity};
 		]]>
 	</select>
 	<insert id="createDepartment" parameterType="buaa.bp.asclepius.model.Department">

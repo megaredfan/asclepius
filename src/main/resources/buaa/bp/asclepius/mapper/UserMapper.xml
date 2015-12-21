@@ -40,7 +40,7 @@
 	</insert>
 	<update id="updateUser" parameterType="buaa.bp.asclepius.model.User">
 		<![CDATA[
-	    	update user set password=#{password},regtime=#{registerTime},lastlogin=#{lastLogin},idno=#{idNo},sex=#{sex},username=#{userName},realname=#{realName},creditlevel=#{creditLevel},email=#{email},activeflag=#{activeFlag},validatecode=#{validateCode}
+	    	update user set regtime=#{registerTime},lastlogin=#{lastLogin},idno=#{idNo},sex=#{sex},username=#{userName},realname=#{realName},creditlevel=#{creditLevel},email=#{email},activeflag=#{activeFlag},validatecode=#{validateCode}
 	    		where id=#{id};
 		]]>
 	</update>
@@ -51,7 +51,7 @@
 	</delete>
 	<select id="getUserByName" parameterType="String" resultMap="userMap">
 		<![CDATA[
-	    	select * from user where username = #{username};
+	    	select * from user where username = #{username} or email = #{username};
 		]]>
 	</select>
 		<select id="count" resultType="int">

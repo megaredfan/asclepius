@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import buaa.bp.asclepius.mapper.AutoAppointmentMapper;
-import buaa.bp.asclepius.model.AutoAppointment;
 
 public class AppointmentDeatilServiceTest {
 	ApplicationContext context = new ClassPathXmlApplicationContext("classpath*:application-config.xml");

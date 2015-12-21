@@ -20,9 +20,9 @@
 	    	select * from appointment where userid = #{userid};
 		]]>
 	</select>
-	<select id="getAppointmentById" resultMap="appointmentMap">
+	<select id="getAppointmentById" parameterType="long" resultMap="appointmentMap">
 	    <![CDATA[
-	    	select * from appointment where userid = #{0} and appointmentid = #{1};
+	    	select * from appointment where appointmentid = #{1};
 		]]>
 	</select>
 	<insert id="createAppointment" parameterType="buaa.bp.asclepius.model.Appointment">
@@ -52,7 +52,7 @@
 		    	select * from appointment limit #{0},#{1};
 		]]>
 	</select>
-	<select id="getAllAppointmetnsByRange" resultMap="appointmentMap">
+	<select id="getAllAppointmentsByRange" resultMap="appointmentMap">
 		<![CDATA[
 		    	select * from appointment where userid=#{0} limit #{1},#{2};
 		]]>

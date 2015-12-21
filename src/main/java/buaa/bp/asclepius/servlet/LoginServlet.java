@@ -20,7 +20,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import buaa.bp.asclepius.logic.DepartmentService;
+import buaa.bp.asclepius.logic.HospitalService;
 import buaa.bp.asclepius.logic.UserService;
+import buaa.bp.asclepius.model.Department;
+import buaa.bp.asclepius.model.Hospital;
 import buaa.bp.asclepius.model.User;
 import buaa.bp.asclepius.utils.MailUtil;
 import buaa.bp.asclepius.utils.UUID11;
@@ -36,6 +40,12 @@ public class LoginServlet {
 	@Resource(name="userService")
 	private UserService userService;
 	
+	@Resource(name="hospitalService")
+	private HospitalService hospitalService;
+	
+	@Resource(name="departmentService")
+	private DepartmentService departmentService;
+	
 	@Resource(name="validator")
 	private Validator validator;
 	
@@ -46,10 +56,13 @@ public class LoginServlet {
 		String password = (String)request.getParameter("password");
 		String opType = (String)request.getParameter("opType");
 		String redirectUrl = (String)request.getParameter("redirectUrl");
-		System.out.println(redirectUrl);
+		
 		if(StringUtils.isBlank(opType))
 		{
 			System.out.println("StringUtils.isBlank(opType)");
+			return m;
+		}else if(opType.compareTo("logout")==0){
+			request.getSession().setAttribute("userInSession", null);
 			return m;
 		}
 		if(StringUtils.isBlank(userName)||StringUtils.isBlank(password))
@@ -64,10 +77,13 @@ public class LoginServlet {
 			m.addObject("message","用户名或密码错误！");
 			return m;
 		}
-		request.getSession().setAttribute("userInSession", userService.getUserByName(userName));
+		User user = userService.getUserByName(userName);
+		user.setLastLogin(new Timestamp(System.currentTimeMillis()));
+		userService.updateUser(user);
+		request.getSession().setAttribute("userInSession", user);
 		if(StringUtils.isBlank(redirectUrl))
 		{
-			response.sendRedirect("index");
+			response.sendRedirect("registed/myAccount.html");
 			return null;
 		}
 		else
@@ -124,7 +140,17 @@ public class LoginServlet {
 	
 	@RequestMapping("/index")
 	public ModelAndView index(){
-		return new ModelAndView(index);
+		List<Hospital> hospitals = hospitalService.getTopHospitals(4);
+		List<Department> departments = departmentService.getTopDepartments(4);
+		ModelAndView m = new ModelAndView(index);
+		m.addObject("hospitals",hospitals);
+		m.addObject("departments",departments);
+		return m;
+	}
+	
+	@RequestMapping("/about.html")
+	public ModelAndView about(){
+		return new ModelAndView("about");
 	}
 	
 	@RequestMapping("/checkUserName.html")
@@ -135,14 +161,17 @@ public class LoginServlet {
 		if(StringUtils.isBlank(userName)){
 			pw.write("<span style=\"color:red\">用户名为空！</span>");
 			pw.flush();
+			pw.close();
 			return;
 		}else if(userService.getUserByName(userName)!=null){
 			pw.write("<span style=\"color:red\">用户名已存在！</span>");
 			pw.flush();
+			pw.close();
 			return;
 		}else{
 			pw.write("<span style=\"color:green\">你可以使用该用户名！</span>");
 			pw.flush();
+			pw.close();
 			return;
 		}
 		

@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,31 +23,38 @@ public class MessageService extends GeneralService {
 	
 	@Resource(name="configLoader")
 	private PropertiesConfiguration configLoader;
-	
+	@Cacheable(value="message")
 	public List<Message> getAllRootMessages(){
 		return messageMapper.getAllRootMessages();
 	}
+	@Cacheable(value="message")
 	public List<Message> getMessagesByPid(long pid){
 		return messageMapper.getMessagesByPid(pid);
 	}
+	@Cacheable(value="message")
 	public List<Message> getUnReplyedMessages(){
 		return messageMapper.getUnReplyedMessages();
 	}
+	@CacheEvict(value="message")
 	public int createMessage(Message message){
 		return messageMapper.createMessage(message);
 	}
+	@CacheEvict(value="message")
 	public int updateMessage(Message message){
 		return messageMapper.updateMessage(message);
 	}
+	@CacheEvict(value="message")
 	public int deleteMessage(long id){
 		return messageMapper.deleteMessage(id);
 	}
+	@Cacheable(value="message")
 	public Message getMessageById(long id){
 		return messageMapper.getMessageById(id);
 	}
 	public int count() {
 		return messageMapper.count();
 	}
+	@Cacheable(value="message")
 	public List<?> selectByRange(int start,int length) {
 		return messageMapper.selectByRange(start, length);
 	}

@@ -1,12 +1,8 @@
 package buaa.bp.asclepius.servlet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Timestamp;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,10 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import buaa.bp.asclepius.logic.AppointmentDetailService;
 import buaa.bp.asclepius.logic.DepartmentService;

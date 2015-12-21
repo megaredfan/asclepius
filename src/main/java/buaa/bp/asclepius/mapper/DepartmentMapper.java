@@ -14,4 +14,5 @@ public interface DepartmentMapper extends SQLRecord  {
 	public int updateDepartment(Department department);
 	public int deleteDepartment(long id);
 	public Hospital getHospitalById(long hospitalId);
+	public List<Department> getTopDepartments(int capacity);
 }

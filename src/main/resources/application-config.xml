@@ -5,6 +5,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:cache="http://www.springframework.org/schema/cache"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -13,9 +14,13 @@
 		http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
         http://www.springframework.org/schema/tx
- 		http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+ 		http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+ 		http://www.springframework.org/schema/cache 
+ 		http://www.springframework.org/schema/cache/spring-cache-3.1.xsd">
         
     <context:component-scan base-package="buaa.bp.asclepius"/>
+    <cache:annotation-driven/>
+    <tx:annotation-driven transaction-manager="txManager" />
     
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
 		<property name="locations">
@@ -40,28 +45,29 @@
 		<property name="testWhileIdle" value="${jdbc.admin.testWhileIdle}" />
 	</bean>
 	
-	<bean id="txManager"  
-        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
         <property name="dataSource" ref="dataSource_asclepius" />  
     </bean>  
-  
-    <tx:annotation-driven transaction-manager="txManager" />
 	
 	<bean id="sqlSessionFactoryAsclepius" name = "sqlSessionFactoryAsclepius" class="org.mybatis.spring.SqlSessionFactoryBean">
 	  <!--   <property name="configLocation" value="classpath:mybatis-config.xml" /> -->
 		<property name="dataSource" ref="dataSource_asclepius" />
 	</bean>
+	
 	<bean id="sqlSessionFactoryTemplateAsclepius" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="sqlSessionFactoryAsclepius" />
 		<constructor-arg index="1" value="SIMPLE" />
 	</bean>
+	
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="buaa.bp.asclepius.mapper" />
 		<property name="sqlSessionTemplateBeanName" value="sqlSessionFactoryTemplateAsclepius" />
 	</bean>
+	
 	<bean name="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
     	<property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
     </bean>
+    
     <bean name="configLoader" class="org.apache.commons.configuration.PropertiesConfiguration">
     	<constructor-arg value="config.properties" />
     </bean>
@@ -86,4 +92,27 @@
         <property name="concurrent" value="false"/>
         <!-- 是否允许任务并发执行。当值为false时，表示必须等到前一个线程处理完毕后才再启一个新的线程 -->  
 	</bean>   
+	
+	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">  
+        <property name="caches">  
+            <set>  
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="default" />  
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="appointment" />  
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="appointmentDetail" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="autoAppointment" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="credit" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="department" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="doctor" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="hospital" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="message" />
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="user" />
+            </set>  
+        </property>  
+    </bean>  
+    
+    <!-- <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"  
+        p:defaultEncoding="UTF-8"  
+        p:maxUploadSize="5400000"  
+        p:uploadTempDir="fileUpload/temp"  
+     /> -->
 </beans>

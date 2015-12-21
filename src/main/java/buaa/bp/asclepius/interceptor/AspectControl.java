@@ -1,6 +1,5 @@
 package buaa.bp.asclepius.interceptor;
 
-import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Timer;
@@ -8,12 +7,11 @@ import java.util.TimerTask;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -68,15 +66,15 @@ public class AspectControl {
 	
 	@Before(value="account()")
 	public void checkAppointments(JoinPoint jp) throws Throwable{
-		System.out.println("ascpect controlling...");
 		//检查用户所有预约的状态，对未支付，未打印等状态进行处理
 		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
 		
 		long userId;
-		
+		User user;
 		try{
-			userId = ((User)request.getSession().getAttribute("userInSession")).getId();
+			user = (User) request.getSession().getAttribute("userInSession");
+			userId = user.getId();
 		}catch(Exception e){
 			logger.error("用户session为空.",e);
 			return;
@@ -90,11 +88,17 @@ public class AspectControl {
 				if((passed/1000/60)>45 && app.getStatus()==Appointment.WAITING_FOR_PAYING){
 					app.setStatus(Appointment.NOT_PAYED);
 					appointmentService.updateAppointment(app);
+					user.setCreditLevel(user.getCreditLevel()-1);
+					userService.updateUser(user);
+					return;
 				}
 				long time = appointmentDetailService.getAppointmentById(app.getAppointmentDetailId()).getDate().getTime();
 				if(System.currentTimeMillis()>time && app.getStatus()==Appointment.WAITING_FOR_PRINTING){
-					app.setStatus(Appointment.NOT_PAYED);
+					app.setStatus(Appointment.NOT_PRINTED);
 					appointmentService.updateAppointment(app);
+					user.setCreditLevel(user.getCreditLevel()-1);
+					userService.updateUser(user);
+					return;
 				}
 			}catch(Exception e){
 				logger.error(e);
@@ -108,53 +112,45 @@ public class AspectControl {
 		//保存出诊记录，进行信用评级等操作
 		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
-		User user = userService.getUserById(Long.parseLong(request.getParameter("userId")));
-		user.setCreditLevel(user.getCreditLevel()+1);
-		Credit credit = new Credit();
-		credit.setCreateTime(new Timestamp(System.currentTimeMillis()));
-		credit.setDescription("");
-		credit.setUserId(user.getId());
-		try{
+		
+		String opType = (String)request.getParameter("opTyp");
+		
+		if(!StringUtils.isBlank(opType))
+		{
+			Credit credit = new Credit();
+			credit.setCreateTime(new Timestamp(System.currentTimeMillis()));
+			credit.setDescription("");
 			credit.setCreditId(UUID11.getRandomId());
-			creditService.createCredit(credit);
-		}catch(DuplicateKeyException e){
-			postPrint(jp);
+			try{
+				
+				User user = userService.getUserById(Long.parseLong(request.getParameter("userId")));
+				user.setCreditLevel(user.getCreditLevel()+1);
+				credit.setUserId(user.getId());
+				creditService.createCredit(credit);
+			}catch(DuplicateKeyException e){
+				postPrint(jp);
+			}
 		}
 	}
 	
-	@Around(value="afterMakingAnAppointment()")
-	public Object confirmAppointment(ProceedingJoinPoint pjp) throws Throwable{
-		//TODO:进行挂号确认
-		Object[] args = pjp.getArgs();
+	@After(value="afterMakingAnAppointment()")
+	public void confirmAppointment(JoinPoint jp) throws Throwable{
+		//支付确认
+		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
-		
-		String trade_status = (String)request.getParameter("trade_status");//交易状态
-		if(!StringUtils.isBlank(trade_status) && 
-				(trade_status.compareTo("WAIT_SELLER_SEND_GOODS") == 0 ||
-				trade_status.compareTo("TRADE_FINISHED") == 0))
-		{
-			return pjp.proceed(args);
-		}
-		
-		
+
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask(){
 			public void run() {
-				String subject = "";
-		        try {
-		        	subject = new String(request.getParameter("subject").getBytes(
-		                "ISO-8859-1"), "UTF-8");
-		        	} catch (UnsupportedEncodingException e1) {
-		        		// TODO Auto-generated catch block
-		        		e1.printStackTrace();
-		        		}// 商品名称、订单名称,保存用户id和预约id
-				String[] str = subject.split(",");
-				long userId = Long.parseLong(str[0]);
-				long appointmentId = Long.parseLong(str[1]);
-				Appointment app = appointmentService.getAppointmentById(userId, appointmentId);
-				app.setStatus(Appointment.NOT_PAYED);
+				String s_app = request.getParameter("appointmentId");
+				long appointmentId = Long.parseLong(s_app);
+				Appointment app = appointmentService.getAppointmentById(appointmentId);
+				if(app.getStatus()!=Appointment.WAITING_FOR_PRINTING){
+					app.setStatus(Appointment.NOT_PAYED);
+					appointmentService.updateAppointment(app);
+				}
 			}
 		}, 45*60*1000);
-		return null;
+		return;
 	}
 }

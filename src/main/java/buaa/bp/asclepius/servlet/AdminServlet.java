@@ -1,12 +1,14 @@
 package buaa.bp.asclepius.servlet;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -17,14 +19,16 @@ import javax.validation.Validator;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
+import org.junit.runner.Request;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import buaa.bp.asclepius.logic.AppointmentDetailService;
 import buaa.bp.asclepius.logic.DepartmentService;
 import buaa.bp.asclepius.logic.DoctorService;
@@ -32,11 +36,11 @@ import buaa.bp.asclepius.logic.HospitalService;
 import buaa.bp.asclepius.logic.MessageService;
 import buaa.bp.asclepius.logic.SystemAdminService;
 import buaa.bp.asclepius.logic.UserService;
+import buaa.bp.asclepius.model.AutoAppointment;
 import buaa.bp.asclepius.model.Department;
 import buaa.bp.asclepius.model.Doctor;
 import buaa.bp.asclepius.model.Hospital;
 import buaa.bp.asclepius.model.Message;
-import buaa.bp.asclepius.model.User;
 import buaa.bp.asclepius.utils.UUID11;
 
 @Controller
@@ -53,11 +57,10 @@ public class AdminServlet {
 	private static final String deptlist = "admin/deptlist";
 	private static final String deptedit = "admin/deptedit";
 	private static final String doctorlist = "admin/doctorlist";
-	private static final String doctorEdit = "admin/doctorEdit";
-	private static final String hosList = "admin/hosList";
-	private static final String hosEdit = "admin/hosEdit";
+	private static final String doctorEdit = "admin/doctoredit";
+	private static final String hosList = "admin/hoslist";
+	private static final String hosEdit = "admin/hosedit";
 	private static final String userlist = "admin/users";
-	private static final String useredit ="admin/useredit";
 	
 	
 	@Resource(name="messageService")
@@ -101,7 +104,11 @@ public class AdminServlet {
 		ModelAndView m = new ModelAndView(login);
 		String userName = (String)request.getParameter("userName");
 		String password = (String)request.getParameter("password");
-		
+		String action = (String)request.getParameter("action");
+		if(!StringUtils.isBlank(action)&&action.compareTo("logout")==0)
+		{
+			return m;
+		}
 		
 		if(StringUtils.isBlank(userName)||StringUtils.isBlank(password)){
 			m.addObject("message","用户名或密码为空！");
@@ -123,7 +130,7 @@ public class AdminServlet {
 	}
 	
 	@RequestMapping("/reply.html")
-	public ModelAndView reply(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView reply(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		ModelAndView m = new ModelAndView(reply);
 		String s_id = (String)request.getParameter("id");
 		String opType=(String)request.getParameter("opType");
@@ -135,7 +142,8 @@ public class AdminServlet {
 				Message msg = messageService.getMessageById(id);
 				m.addObject("message",msg);
 			}catch(Exception e){
-				return messages(request,response);
+				response.sendRedirect("messages.html");
+				return null;
 			}
 		}
 		if(!StringUtils.isBlank(opType))
@@ -185,12 +193,11 @@ public class AdminServlet {
 				try{
 					m.addObject("departments",departmentService.getAllDepartmentsByHospital(Long.parseLong(s_hos)));
 				}catch(NumberFormatException e){
-					return m;
+					m.addObject("hospitals",hospitalService.getAllHospitals());
 				}catch(Exception e){
 					m = new ModelAndView(appedit);
 					m.addObject("hospitals",hospitalService.getAllHospitals());
 					System.out.println("dep is blank.but there is a exception.");
-					e.printStackTrace();
 				}
 				return m;
 			}
@@ -200,17 +207,55 @@ public class AdminServlet {
 				try{
 					m.addObject("doctors",doctorService.getDoctorsByDepartment(Long.parseLong(s_dep)));
 				}catch(NumberFormatException e){
-					return m;
+					m.addObject("hospitals",hospitalService.getAllHospitals());
 				}catch(Exception e){
 					m = new ModelAndView(appedit);
 					m.addObject("hospitals",hospitalService.getAllHospitals());
 					System.out.println("hos is blank.but there is a exception.");
-					e.printStackTrace();
 				}
 				return m;
 			}
 		}
-		
+		if(!StringUtils.isBlank(opType)){
+			System.out.println("opType = edit");
+			m = new ModelAndView(appedit);
+			String s_doc = (String)request.getParameter("doctorId");
+			String s_day = (String)request.getParameter("day");
+			String s_time = (String)request.getParameter("time");
+			String s_amo = (String)request.getParameter("amount");
+			long hospitalId = 0,departmentId = 0,doctorId = 0;
+			String day = s_day,time = s_time;
+			int amount = 0;
+			if(StringUtils.isBlank(s_dep)||
+					StringUtils.isBlank(s_hos)||
+					StringUtils.isBlank(s_doc)||
+					StringUtils.isBlank(s_day)||
+					StringUtils.isBlank(s_time)||
+					StringUtils.isBlank(s_amo)){
+				m.addObject("hospitals",hospitalService.getAllHospitals());
+				System.out.println("some parameter is null.");
+				return m;
+			}else{
+				try{
+					hospitalId = Long.parseLong(s_hos);
+					departmentId = Long.parseLong(s_dep);
+					doctorId = Long.parseLong(s_doc);
+					amount = Integer.parseInt(s_amo);
+					if(amount<0){
+						System.out.println("amount<0.");
+						return m;
+					}
+				}catch(NumberFormatException e){
+					System.out.println("NumberFormatException.");
+					return m;
+				}
+				AutoAppointment app = appointmentDetailService.selectByConditions(hospitalId, departmentId, doctorId, day, time);
+				app.setAmount(amount);
+				appointmentDetailService.updateAutoAppointment(app);
+			}
+			m.addObject("hospitals",hospitalService.getAllHospitals());
+		}
+		System.out.println("finished.");
 		return m;
 	}
 	
@@ -221,13 +266,32 @@ public class AdminServlet {
 	}
 
 	@RequestMapping("/departmentEdit.html")
-	public ModelAndView departmentEdit(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView departmentEdit(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		ModelAndView m = new ModelAndView(deptedit);
+		m.addObject("hospitals",hospitalService.getAllHospitals());
 		Department department = new Department();
 		
 		String opType = (String)request.getParameter("opType");
 		String s_departmentId = (String)request.getParameter("departmentId");
 		String s_hospitalId = (String)request.getParameter("hospitalId");
+		String action = (String)request.getParameter("action");
+		
+		if(!StringUtils.isBlank(action))
+		{
+
+			if(action.compareTo("edit")==0)
+			{
+				try{
+					Department dept = departmentService.getDepartmentById(Long.parseLong(s_departmentId));
+					m.addObject("department",dept);
+					m.addObject("belongsHospital",dept.getHospital());
+				}catch(Exception e){
+					response.sendRedirect("departmentList.html");
+					return null;
+				}
+			}
+			return m;
+		}
 		
 		if(StringUtils.isBlank(opType)&&StringUtils.isBlank(s_departmentId)&&!StringUtils.isBlank(s_hospitalId))
 		{
@@ -235,20 +299,22 @@ public class AdminServlet {
 				department = departmentService.getDepartmentById(Long.parseLong(s_departmentId));
 				m.addObject("department",department);
 			}catch(Exception e){
-				return new ModelAndView(deptlist);
+				response.sendRedirect("departmentList.html");
+				return null;
 			}
 		}
 		
-		if(!StringUtils.isBlank(opType)&&!StringUtils.isBlank(s_departmentId)&&!StringUtils.isBlank(s_hospitalId))
+		if(!StringUtils.isBlank(opType)&&!StringUtils.isBlank(s_hospitalId))
 		{
-			if(opType.compareTo("edit")==0)
+			if(opType.compareTo("edit")==0&&!StringUtils.isBlank(s_departmentId))
 			{
 					try{
 						department = departmentService.getDepartmentById(Long.parseLong(s_departmentId));
+						department.setHospital(hospitalService.getHostpitalById(Long.parseLong(s_hospitalId)));
 					}catch(Exception e){
-						return new ModelAndView(deptlist);
+						response.sendRedirect("departmentList.html");
+						return null;
 					}
-					
 					department.setDepartmentName((String)request.getParameter("departmentName"));
 					department.setDescription((String)request.getParameter("description"));
 					Set<ConstraintViolation<Department>> constraintViolations = validator.validate(department);
@@ -293,25 +359,28 @@ public class AdminServlet {
 			
 		}
 		
-		return new ModelAndView(deptlist);
+		response.sendRedirect("departmentList.html");
+		return null;
 	}
 
 	@RequestMapping("/departmentDelete.html")
-	public ModelAndView departmentDelete(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView departmentDelete(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		String s_departmentid = (String)request.getParameter("departmentId");
 		if(StringUtils.isBlank(s_departmentid))
 		{
-			return departmentList(request, response);
+			response.sendRedirect("departmentList.html");
+			return null;
 		}	
 		long departmentId;
 		try{
 			departmentId = Long.parseLong(s_departmentid);
 			departmentService.deleteDepartment(departmentId);
 		}catch(Exception e){
-			return departmentList(request, response);
+			response.sendRedirect("departmentList.html");
+			return null;
 		}
-		
-		return departmentList(request, response);
+		response.sendRedirect("departmentList.html");
+		return null;
 	}
 
 	@RequestMapping("/hospitalList.html")
@@ -323,12 +392,26 @@ public class AdminServlet {
 	}
 
 	@RequestMapping("/hospitalEdit.html")
-	public ModelAndView hospitalEidt(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView hospitalEidt(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		ModelAndView m = new ModelAndView(hosEdit);
 		Hospital hospital = new Hospital();
 		
 		String opType = (String)request.getParameter("opType");
 		String s_hospitalId = (String)request.getParameter("hospitalId");
+		String action = (String)request.getParameter("action");
+		
+		if(!StringUtils.isBlank(action)){
+			if(action.compareTo("edit")!=0){
+				return m;
+			}
+			try{
+				hospital = hospitalService.getHostpitalById(Long.parseLong(s_hospitalId));
+				m.addObject("hospital",hospital);
+			}catch(Exception e){
+				
+			}
+			return m;
+		}
 		
 		if(StringUtils.isBlank(opType)&&StringUtils.isBlank(s_hospitalId))
 		{
@@ -336,18 +419,20 @@ public class AdminServlet {
 				hospital = hospitalService.getHostpitalById(Long.parseLong(s_hospitalId));
 				m.addObject("hospital",hospital);
 			}catch(Exception e){
-				return new ModelAndView(hosList);
+				response.sendRedirect("hospitalList.html");
+				return null;
 			}
 		}
 		
-		if(!StringUtils.isBlank(opType)&&!StringUtils.isBlank(s_hospitalId))
+		if(!StringUtils.isBlank(opType))
 		{
-			if(opType.compareTo("edit")==0)
+			if(opType.compareTo("edit")==0&&!StringUtils.isBlank(s_hospitalId))
 			{
 					try{
 						hospital = hospitalService.getHostpitalById(Long.parseLong(s_hospitalId));
 					}catch(Exception e){
-						return new ModelAndView(hosList);
+						response.sendRedirect("hospitalList.html");
+						return null;
 					}
 					
 					hospital.setHospitalName(request.getParameter("hospitalName"));
@@ -387,24 +472,28 @@ public class AdminServlet {
 				}
 			}
 		}
-		return new ModelAndView(hosList);
+		response.sendRedirect("hospitalList.html");
+		return null;
 	}
 	
 	@RequestMapping("/hospitalDelete.html")
-	public ModelAndView hospitalDelete(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView hospitalDelete(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		String s_hospitalId = (String)request.getParameter("hospitalId");
 		if(StringUtils.isBlank(s_hospitalId))
 		{
-			return hospitalList(request, response);
+			response.sendRedirect("hospitalList.html");
+			return null;
 		}	
 		long hospitalId;
 		try{
 			hospitalId = Long.parseLong(s_hospitalId);
 			hospitalService.deleteHospital(hospitalId);
 		}catch(Exception e){
-			return hospitalList(request, response);
+			response.sendRedirect("hospitalList.html");
+			return null;
 		}
-		return hospitalList(request, response);
+		response.sendRedirect("hospitalList.html");
+		return null;
 	}
 
 	@RequestMapping("/doctorList.html")
@@ -414,61 +503,91 @@ public class AdminServlet {
 	}
 
 	@RequestMapping("/doctorEdit.html")
-	public ModelAndView doctorEdit(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView doctorEdit(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		ModelAndView m = new ModelAndView(doctorEdit);
 		Doctor doctor = new Doctor();
-		long departmentId;
+		long departmentId,hospitalId;
+		
+		m.addObject("hospitals",hospitalService.getAllHospitals());
+		m.addObject("departments",departmentService.getAllDepartments());
 		
 		String opType = (String)request.getParameter("opType");
-		String s_doctorId = (String)request.getParameter("departmentId");
-		
-		if(StringUtils.isBlank(opType)&&StringUtils.isBlank(s_doctorId))
+		String action = (String)request.getParameter("action");
+		String s_doctorId = (String)request.getParameter("doctorId");
+		String s_departmentId = (String)request.getParameter("departmentId");
+		String s_hospitalId = (String)request.getParameter("hospitalId");
+		String option = (String)request.getParameter("get");
+		if(!StringUtils.isBlank(option)&&!StringUtils.isBlank(s_hospitalId))
 		{
+			m = new ModelAndView("admin/deptoption");
+			try{
+				m.addObject("departments",departmentService.getAllDepartmentsByHospital(Long.parseLong(s_hospitalId)));
+			}catch(Exception e){
+				
+			}
+			
+			return m;
+		}
+		
+		if(!StringUtils.isBlank(action))
+		{
+			if(action.compareTo("edit")!=0)
+			{
+				return m;
+			}
 			try{
 				doctor = doctorService.getDoctorById(Long.parseLong(s_doctorId));
 				m.addObject("doctor",doctor);
+				m.addObject("belongsDepartment",doctor.getDepartment());
 			}catch(Exception e){
-				return new ModelAndView(doctorlist);
+				
 			}
+			return m;
 		}
 		
-		if(!StringUtils.isBlank(opType)&&!StringUtils.isBlank(s_doctorId))
+		if(!StringUtils.isBlank(opType))
 		{
+			
 			try{
-				departmentId = Long.parseLong(request.getParameter("departmentId"));
+				departmentId = Long.parseLong(s_departmentId);
+				hospitalId = Long.parseLong(s_hospitalId);
 			}catch(Exception e){
-				return new ModelAndView(doctorlist);
+				response.sendRedirect("doctorList.html");
+				return null;
 			}
-			if(opType.compareTo("edit")==0)
+			Department department = departmentService.getDepartmentById(departmentId);
+			Hospital hospital = hospitalService.getHostpitalById(hospitalId);
+			if(department==null||hospital==null)
 			{
-					try{
-						doctor = doctorService.getDoctorById(Long.parseLong(s_doctorId));
-					}catch(Exception e){
-						return new ModelAndView(doctorlist);
+				m.addObject("fieldErrors","医院或科室不存在");
+				return m;
+			}
+			
+			if(opType.compareTo("edit")==0&&!StringUtils.isBlank(s_doctorId))
+			{
+				doctor = doctorService.getDoctorById(Long.parseLong(s_doctorId));
+				department.setHospital(hospital);
+				doctor.setDepartment(department);
+				doctor.setDescription((String)request.getParameter("description"));
+				doctor.setLevel((String)request.getParameter("level"));
+				doctor.setName((String)request.getParameter("name"));
+				doctor.setSex((String)request.getParameter("sex"));
+				Set<ConstraintViolation<Doctor>> constraintViolations = validator.validate(doctor);
+				if(constraintViolations.size() > 0){
+					List<String> fieldErrors = new ArrayList<String>();
+					for(ConstraintViolation<Doctor> c : constraintViolations){
+						fieldErrors.add(c.getMessage());
 					}
-					
-					doctor.setDepartment(departmentService.getDepartmentById(departmentId));
-					doctor.setDescription((String)request.getParameter("description"));
-					doctor.setLevel((String)request.getParameter("level"));
-					doctor.setName((String)request.getParameter("name"));
-					doctor.setSex((String)request.getParameter("sex"));
-					Set<ConstraintViolation<Doctor>> constraintViolations = validator.validate(doctor);
-					if(constraintViolations.size() > 0){
-						List<String> fieldErrors = new ArrayList<String>();
-						for(ConstraintViolation<Doctor> c : constraintViolations){
-							fieldErrors.add(c.getMessage());
-						}
-						System.out.println(fieldErrors.size());
-						m.addObject("fieldErrors",fieldErrors);
-						return m;
-					}
-					doctorService.updateDoctor(doctor);
-				
-				
+					System.out.println(fieldErrors.size());
+					m.addObject("fieldErrors",fieldErrors);
+					return m;
+				}
+				doctorService.updateDoctor(doctor);
+			
 			}else if(opType.compareTo("add")==0) {
 				doctor.setDoctorId(UUID11.getRandomId());
-
-				doctor.setDepartment(departmentService.getDepartmentById(departmentId));
+				department.setHospital(hospital);
+				doctor.setDepartment(department);
 				doctor.setDescription((String)request.getParameter("description"));
 				doctor.setLevel((String)request.getParameter("level"));
 				doctor.setName((String)request.getParameter("name"));
@@ -492,11 +611,12 @@ public class AdminServlet {
 			}
 			
 		}
-		return new ModelAndView(doctorlist);
+		response.sendRedirect("doctorList.html");
+		return null;
 	}
 	
 	@RequestMapping("/doctorDelete.html")
-	public ModelAndView doctorDelete(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView doctorDelete(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		String s_doctorId = (String)request.getParameter("doctorId");
 		if(StringUtils.isBlank(s_doctorId))
 		{
@@ -507,9 +627,10 @@ public class AdminServlet {
 			doctorId = Long.parseLong(s_doctorId);
 			doctorService.deleteDoctor(doctorId);
 		}catch(Exception e){
-			return doctorList(request, response);
+			
 		}
-		return doctorList(request, response);
+		response.sendRedirect("doctorList.html");
+		return null;
 	}
 	
 	@RequestMapping("/userList.html")
@@ -518,7 +639,7 @@ public class AdminServlet {
 		return m;
 	}
 	
-	@RequestMapping("userEdit.html")
+	/*@RequestMapping("userEdit.html")
 	public ModelAndView userEdit(HttpServletRequest request,HttpServletResponse response){
 		ModelAndView m = new ModelAndView(useredit);
 		User user = new User();
@@ -615,7 +736,7 @@ public class AdminServlet {
 		}
 		
 		return userList(request,response);
-	}
+	}*/
 
 	@RequestMapping("/users.json")
 	public void usersJson(HttpServletRequest request,HttpServletResponse response) throws IOException{
@@ -679,4 +800,58 @@ public class AdminServlet {
 		pw.write(mapper.writeValueAsString(doctors));
 		return;
 	}
+	
+	@RequestMapping(value="/upload.html",method=RequestMethod.GET)
+	public ModelAndView uploadImg(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		String s_hos = (String)request.getParameter("hospitalId");
+		try{
+			ModelAndView m = new ModelAndView("admin/afterupload");
+			Hospital hospital = hospitalService.getHostpitalById(Long.parseLong(s_hos));
+			m.addObject("hospital",hospital);
+			return m;
+		}catch(Exception e){
+			response.sendRedirect("hospitalList.html");
+			return null;
+		}
+		
+	}
+	
+	@RequestMapping(value="/upload.html", method=RequestMethod.POST)
+    public ModelAndView handleFileUpload(HttpServletRequest request,@RequestParam("hospitalImage") MultipartFile file){
+		ModelAndView m = new ModelAndView("admin/afterupload");
+		String hospitalId;
+		System.out.println(request.getQueryString());
+		hospitalId = request.getQueryString().split("=")[1];
+		System.out.println(hospitalId);
+		if(request.getQueryString().split("=")[0].compareTo("hospitalId")!=0||
+				StringUtils.isBlank(hospitalId)){
+			m.addObject("message","参数不正确！");
+			return m;
+		}
+        if (!file.isEmpty()) {
+            try {
+                if(file.getOriginalFilename().endsWith(".jpg")){
+                	String filePath = request.getSession().getServletContext().getRealPath("/") + "images/hospital/" + hospitalId + ".jpg";
+                	File img = new File(filePath);
+                	if(img.exists())
+                		img.delete();
+                	file.transferTo(img);
+                	System.out.println(hospitalId);
+                	m.addObject("message","上传成功！");
+                    return m;
+                }
+                m.addObject("message","格式不正确！");
+                return m;
+                //return "You successfully uploaded " + name + " into " + name + "-uploaded !";
+            } catch (Exception e) {
+            	m.addObject("message","上传失败！");
+                return m;
+                //return "You failed to upload " + name + " => " + e.getMessage();
+            }
+        } else {
+        	m.addObject("message","文件为空！");
+            return m;
+            //return "You failed to upload " + name + " because the file was empty.";
+        }
+    }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.AutoAppointmentMapper">
+	<resultMap id="appointmentDetailMap" type="buaa.bp.asclepius.model.AutoAppointment">
+		<id property="id" column="id" />
+		<result property="hospitalId" column="hospitalid" />
+		<result property="departmentId" column="departmentid" />
+		<result property="doctorId" column="doctorid" />
+		<result property="day" column="day" />
+		<result property="time" column="time" />
+ 		<result property="amount" column="amount" />
+	</resultMap>
+	<insert id="create" parameterType="buaa.bp.asclepius.model.AutoAppointment">
+	    <![CDATA[
+	    	insert into appointmentpool(id,hospitalid,departmentid,doctorid,day,time,amount)
+	    		values(#{id},#{hospitalId},#{departmentId},#{doctorId},#{day},#{time},#{amount});
+		]]>
+	</insert>
+	<update id="update" parameterType="buaa.bp.asclepius.model.AutoAppointment">
+		<![CDATA[
+	    	update appointmentpool set hospitalid=#{hospitalId},departmentid=#{departmentId},doctorid=#{doctorId},day=#{day},time=#{time},amount=#{amount}
+	    		where id=#{id};
+		]]>
+	</update>
+	<delete id="delete" parameterType="long">
+		<![CDATA[
+	    	delete from appointmentpool where id=#{id};
+		]]>
+	</delete>
+	<select id="select" resultType="buaa.bp.asclepius.model.AutoAppointment">
+		<![CDATA[
+	    	select * from appointmentpool where hospitalid=#{0} and departmentid=#{1} and doctorid=#{2} and day=#{3} and time=#{4};
+		]]>
+	</select>
+	<select id="selectAll" resultType="buaa.bp.asclepius.model.AutoAppointment">
+		<![CDATA[
+	    	select * from appointmentpool;
+		]]>
+	</select>
+</mapper>

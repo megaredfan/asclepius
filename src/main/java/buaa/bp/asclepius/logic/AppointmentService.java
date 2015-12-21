@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,25 +23,30 @@ public class AppointmentService extends GeneralService {
 	
 	@Resource(name="appointmentMapper")
 	private AppointmentMapper appointmentMapper;
-	
+	@Cacheable(value="appointment")
 	public List<Appointment> getAllAppointments(long userId) {
 		return appointmentMapper.getAllAppointments(userId);
 	}
-	public Appointment getAppointmentById(long userId,long appointmentId) {
-		return appointmentMapper.getAppointmentById(userId, appointmentId);
+	@Cacheable(value="appointment")
+	public Appointment getAppointmentById(long appointmentId) {
+		return appointmentMapper.getAppointmentById(appointmentId);
 	}
+	@CacheEvict(value="appointment")
 	public int createAppointment(Appointment appointment) {
 		return appointmentMapper.createAppointment(appointment);
 	}
+	@CacheEvict(value="appointment")
 	public int updateAppointment(Appointment appointment) {
 		return appointmentMapper.updateAppointment(appointment);
 	}
+	@CacheEvict(value="appointment")
 	public int deleteAppointment(long id) {
 		return appointmentMapper.deleteAppointment(id);
 	}
 	public int count() {
 		return appointmentMapper.count();
 	}
+	@Cacheable(value="appointment")
 	public List<?> selectByRange(int start,int length) {
 		return appointmentMapper.selectByRange(start, length);
 	}
@@ -64,7 +71,7 @@ public class AppointmentService extends GeneralService {
 			pageNo = totalPages-1;
 		}
 		
-		List<Appointment> list = appointmentMapper.getAllAppointmetnsByRange(userId, pageNo * pageSize,pageSize);
+		List<Appointment> list = appointmentMapper.getAllAppointmentsByRange(userId, pageNo * pageSize,pageSize);
 		System.out.println(list);
 		m.addObject(listName,list);
 		m.addObject("pageNo",pageNo);

@@ -13,6 +13,12 @@
 	    	select * from hospital;
 		]]>
 	</select>
+	<select id="getTopHospitals" parameterType="int" resultMap="hospitalMap">
+	    <![CDATA[
+	    	select * from hospital where hospitalid in (select hospitalid from doctor group by hospitalid order by count(doctorid)
+ 				desc) limit 0,#{capacity};
+		]]>
+	</select>
 	<select id="getHostpitalById" parameterType="long" resultMap="hospitalMap">
 	    <![CDATA[
 	    	select * from hospital where hospitalid = #{hospitalId};

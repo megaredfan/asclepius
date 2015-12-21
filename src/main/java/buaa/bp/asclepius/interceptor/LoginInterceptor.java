@@ -38,6 +38,10 @@ public class LoginInterceptor  extends HandlerInterceptorAdapter{
 		boolean handlerOk = super.preHandle(request, response, handler);
 			if(handlerOk){
 				String url = request.getRequestURI().toString();
+				if(url.contains("admin")&&!url.contains("auth.html")){
+					if(request.getSession().getAttribute("adminInSession")==null)
+						response.sendRedirect("/Asclepius/admin/index.html");
+				}
 				url=url.substring(url.lastIndexOf("/")+1);
 				System.out.println(url);
 				if(urlInitList().contains(url)){

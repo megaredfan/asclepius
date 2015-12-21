@@ -10,4 +10,5 @@ public interface HospitalMapper extends SQLRecord  {
 	public int createHospital(Hospital hospital);
 	public int updateHospital(Hospital hospital);
 	public int deleteHospital(long id);
+	public List<Hospital> getTopHospitals(int capacity);
 }

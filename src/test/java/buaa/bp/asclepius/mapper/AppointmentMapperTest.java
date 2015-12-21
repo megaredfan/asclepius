@@ -34,7 +34,7 @@ public class AppointmentMapperTest {
 		
 		Assert.assertEquals(1, appointmentMapper.updateAppointment(appointment));
 		
-		appointment = appointmentMapper.getAppointmentById(41216998636L, 41216998636L);
+		appointment = appointmentMapper.getAppointmentById(41216998636L);
 		System.out.println(appointment);
 		
 		List<Appointment> list = appointmentMapper.getAllAppointments(41216998636L);
