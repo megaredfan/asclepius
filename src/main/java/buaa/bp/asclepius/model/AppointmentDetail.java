@@ -10,6 +10,7 @@ public class AppointmentDetail {
 	private long doctorId;
 	private long deptId;
 	private long hospitalId;
+	private double cost;
 	
 	public long getAppdetailId() {
 		return appdetailId;
@@ -53,10 +54,17 @@ public class AppointmentDetail {
 	public void setHospitalId(long hospitalId) {
 		this.hospitalId = hospitalId;
 	}
+	public double getCost() {
+		return cost;
+	}
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
 	@Override
 	public String toString() {
 		return "AppointmentDetail [appdetailId=" + appdetailId + ", date=" + date + ", time=" + time + ", amount="
-				+ amount + ", doctorId=" + doctorId + ", deptId=" + deptId + ", hospitalId=" + hospitalId + "]";
+				+ amount + ", doctorId=" + doctorId + ", deptId=" + deptId + ", hospitalId=" + hospitalId + ", cost="
+				+ cost + "]";
 	}
 	
 }

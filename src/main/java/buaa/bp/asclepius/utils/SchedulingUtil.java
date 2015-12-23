@@ -32,6 +32,7 @@ public class SchedulingUtil {
 	public void execute() throws ConfigurationException{
 		PropertiesConfiguration conf = new PropertiesConfiguration("config.properties");
 		int capacity = conf.getInt("defaultCapacity");
+		double cost = conf.getDouble("defaultCost");
 		
 		for(Doctor d : doctorService.getAllDoctors()){
 			AutoAppointment app = new AutoAppointment();
@@ -59,6 +60,7 @@ public class SchedulingUtil {
 				app.setAmount(capacity);
 				app.setTime("morning");
 				app.setId(UUID11.getRandomId());
+				app.setCost(cost);
 				if(appointmentDetailService.selectByConditions(app.getHospitalId(), app.getDepartmentId(), app.getDoctorId(), app.getDay(), app.getTime())==null)
 				{
 					try{
@@ -92,6 +94,7 @@ public class SchedulingUtil {
 			a.setDeptId(autoapp.getDepartmentId());
 			a.setDoctorId(autoapp.getDoctorId());
 			a.setTime(autoapp.getTime());
+			a.setCost(autoapp.getCost());
 			
 			switch(autoapp.getDay()){
 			case "mon":

@@ -1,7 +1,6 @@
 package buaa.bp.asclepius.servlet;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -30,15 +29,17 @@ import buaa.bp.asclepius.logic.AppointmentService;
 import buaa.bp.asclepius.logic.DepartmentService;
 import buaa.bp.asclepius.logic.DoctorService;
 import buaa.bp.asclepius.logic.HospitalService;
+import buaa.bp.asclepius.logic.PaymentService;
 import buaa.bp.asclepius.logic.UserService;
 import buaa.bp.asclepius.model.Appointment;
 import buaa.bp.asclepius.model.AppointmentDetail;
 import buaa.bp.asclepius.model.Department;
 import buaa.bp.asclepius.model.Doctor;
 import buaa.bp.asclepius.model.Hospital;
+import buaa.bp.asclepius.model.Payment;
 import buaa.bp.asclepius.model.User;
-import buaa.bp.asclepius.utils.UUID11;
 import buaa.bp.asclepius.utils.TimeUtil;
+import buaa.bp.asclepius.utils.UUID11;
 
 @Controller
 @Transactional
@@ -77,6 +78,9 @@ public class RegistedServlet {
 
 	@Resource(name="doctorService")
 	private DoctorService doctorService;
+	
+	@Resource(name="paymentService")
+	private PaymentService paymentService;
 	
 	@RequestMapping("/myAccount.html")
 	public ModelAndView account(HttpServletRequest request,HttpServletResponse response) throws IOException{
@@ -300,7 +304,7 @@ public class RegistedServlet {
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED) 
 	@RequestMapping("/pay.html")
-	public ModelAndView pay(HttpServletRequest request,HttpServletResponse response){
+	public ModelAndView pay(HttpServletRequest request,HttpServletResponse response) throws IOException{
 		ModelAndView m = new ModelAndView(pay);
 		return m;
 		//TODO:跳转到支付页面
@@ -379,13 +383,29 @@ public class RegistedServlet {
 		if(trade_status.compareTo("WAIT_SELLER_SEND_GOODS") == 0 ||
 				trade_status.compareTo("TRADE_FINISHED") == 0)*/
 		
-			String str = (String)request.getParameter("appointmentId");
-			long appointmentId = Long.parseLong(str);
-			Appointment app = appointmentService.getAppointmentById(appointmentId);
-			app.setStatus(Appointment.WAITING_FOR_PRINTING);
-			appointmentService.updateAppointment(app);
-			
-		
+		long userId,appointmentId;
+		String s_appointmentId = (String)request.getParameter("appointmentId");
+		try{
+			userId = ((User)request.getSession().getAttribute("userInSession")).getId();
+			appointmentId = Long.parseLong(s_appointmentId);
+		}catch(Exception e){
+			response.sendRedirect("myAccount.html");
+			return;
+		}//23.25 
+		Payment pay = new Payment();
+		pay.setPaymentId(UUID11.getRandomId());
+		Appointment app = appointmentService.getAppointmentById(appointmentId);
+		AppointmentDetail appdetail = appointmentDetailService.getAppointmentById(app.getAppointmentDetailId());
+		if(app==null||appdetail==null)
+		{
+			response.sendRedirect("myAccount.html");
+			return;
+		}
+		pay.setAppointmentId(appointmentId);
+		pay.setUserId(userId);
+		pay.setCost(appdetail.getCost());
+		pay.setDate(new Timestamp(System.currentTimeMillis()));
+		paymentService.createPayment(pay);
 		response.sendRedirect("myAccount.html");
 		return;
 	}

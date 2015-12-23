@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="buaa.bp.asclepius.mapper.PaymentMapper">
+	<resultMap id="paymentMap" type="buaa.bp.asclepius.model.Payment">
+		<id property="paymentId" column="paymentid" />
+		<result property="cost" column="cost" />
+		<result property="userId" column="userid" />
+		<result property="date" column="date" />
+		<result property="appointmentId" column="appointmentid" />
+	</resultMap>
+	<select id="getAllPayments" parameterType="long" resultMap="paymentMap">
+	    <![CDATA[
+	    	select * from credit where userid = #{userId};
+		]]>
+	</select>
+	<select id="getPaymentById" resultMap="paymentMap">
+	    <![CDATA[
+	    	select * from credit where userid = #{0} and creditid = #{1};
+		]]>
+	</select>
+	<insert id="createPayment" parameterType="buaa.bp.asclepius.model.Payment">
+	    <![CDATA[
+	    	insert into payment(paymentid,cost,userid,date,appointmentid)
+	    		values(#{paymentId},#{cost},#{userId},#{date},#{appointmentId});
+		]]>
+	</insert>
+	<update id="updatePayment" parameterType="buaa.bp.asclepius.model.Payment">
+		<![CDATA[
+	    	update payment set cost=#{cost},userid=#{userId},date=#{date},appointmentid=#{appointmentId}
+	    		where paymentid = #{paymentId}
+		]]>
+	</update>
+	<delete id="deletePayment" parameterType="long">
+		<![CDATA[
+	    	delete from payment where where paymentid = #{paymentId}
+		]]>
+	</delete>
+	<select id="count" resultType="int">
+		<![CDATA[
+		    	select count(1) from payment;
+		]]>
+	</select>
+	<select id="selectByRange" resultMap="paymentMap">
+		<![CDATA[
+		    	select * from payment limit #{0},#{1};
+		]]>
+	</select>
+</mapper>

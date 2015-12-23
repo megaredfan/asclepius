@@ -113,22 +113,27 @@ public class AspectControl {
 		Object[] args = jp.getArgs();
 		HttpServletRequest request = (HttpServletRequest)args[0];
 		
-		String opType = (String)request.getParameter("opTyp");
-		
+		String opType = (String)request.getParameter("opType");
+		String s_appointmentID = (String)request.getParameter("appointmentId");
+		long appointmentId;
 		if(!StringUtils.isBlank(opType))
 		{
 			Credit credit = new Credit();
 			credit.setCreateTime(new Timestamp(System.currentTimeMillis()));
 			credit.setDescription("");
+			
 			credit.setCreditId(UUID11.getRandomId());
 			try{
-				
 				User user = userService.getUserById(Long.parseLong(request.getParameter("userId")));
 				user.setCreditLevel(user.getCreditLevel()+1);
 				credit.setUserId(user.getId());
+				credit.setAppointmentId(Long.parseLong(s_appointmentID));
 				creditService.createCredit(credit);
+				userService.updateUser(user);
 			}catch(DuplicateKeyException e){
 				postPrint(jp);
+			}catch(NumberFormatException e1){
+				logger.error(e1);
 			}
 		}
 	}

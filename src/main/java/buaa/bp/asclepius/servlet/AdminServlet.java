@@ -1,8 +1,6 @@
 package buaa.bp.asclepius.servlet;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
@@ -19,7 +17,6 @@ import javax.validation.Validator;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.junit.runner.Request;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -223,15 +220,18 @@ public class AdminServlet {
 			String s_day = (String)request.getParameter("day");
 			String s_time = (String)request.getParameter("time");
 			String s_amo = (String)request.getParameter("amount");
+			String s_cost = (String)request.getParameter("cost");
 			long hospitalId = 0,departmentId = 0,doctorId = 0;
 			String day = s_day,time = s_time;
 			int amount = 0;
+			double cost = 1.0;
 			if(StringUtils.isBlank(s_dep)||
 					StringUtils.isBlank(s_hos)||
 					StringUtils.isBlank(s_doc)||
 					StringUtils.isBlank(s_day)||
 					StringUtils.isBlank(s_time)||
-					StringUtils.isBlank(s_amo)){
+					StringUtils.isBlank(s_amo)||
+					StringUtils.isBlank(s_cost)){
 				m.addObject("hospitals",hospitalService.getAllHospitals());
 				System.out.println("some parameter is null.");
 				return m;
@@ -241,6 +241,9 @@ public class AdminServlet {
 					departmentId = Long.parseLong(s_dep);
 					doctorId = Long.parseLong(s_doc);
 					amount = Integer.parseInt(s_amo);
+					cost = Double.parseDouble(s_cost);
+					if(cost<1.0)
+						cost=1.0;
 					if(amount<0){
 						System.out.println("amount<0.");
 						return m;
@@ -251,6 +254,7 @@ public class AdminServlet {
 				}
 				AutoAppointment app = appointmentDetailService.selectByConditions(hospitalId, departmentId, doctorId, day, time);
 				app.setAmount(amount);
+				app.setCost(cost);
 				appointmentDetailService.updateAutoAppointment(app);
 			}
 			m.addObject("hospitals",hospitalService.getAllHospitals());
@@ -798,6 +802,29 @@ public class AdminServlet {
 			doctors.add(m);
 		}
 		pw.write(mapper.writeValueAsString(doctors));
+		return;
+	}
+	
+	@RequestMapping("/appointmentDetails.json")
+	public void appointmentDetailsJson(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter pw = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+		List<LinkedHashMap<String,String>> appdetails = new ArrayList<LinkedHashMap<String,String>>();
+		for(AutoAppointment a : appointmentDetailService.getAllAutoAppointments()){
+			LinkedHashMap<String, String> m = new LinkedHashMap<String,String>();
+			m.put("id", String.valueOf(a.getId()));
+			m.put("hospital",hospitalService.getHostpitalById(a.getHospitalId()).getHospitalName());
+			m.put("department",departmentService.getDepartmentById(a.getDepartmentId()).getDepartmentName());
+			m.put("doctor",doctorService.getDoctorById(a.getDoctorId()).getName());
+			m.put("day",a.getDay());
+			m.put("time",a.getTime());
+			m.put("amount", String.valueOf(a.getAmount()));
+			m.put("cost",String.valueOf(a.getCost()));
+			appdetails.add(m);
+		}
+		pw.write(mapper.writeValueAsString(appdetails));
 		return;
 	}
 	

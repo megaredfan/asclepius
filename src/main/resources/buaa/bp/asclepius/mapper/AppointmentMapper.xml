@@ -22,7 +22,7 @@
 	</select>
 	<select id="getAppointmentById" parameterType="long" resultMap="appointmentMap">
 	    <![CDATA[
-	    	select * from appointment where appointmentid = #{1};
+	    	select * from appointment where appointmentid = #{id};
 		]]>
 	</select>
 	<insert id="createAppointment" parameterType="buaa.bp.asclepius.model.Appointment">

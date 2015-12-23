@@ -78,6 +78,7 @@ public class Appointment {
 	public void setAppointmentDetailId(long appointmentDetailId) {
 		this.appointmentDetailId = appointmentDetailId;
 	}
+
 	@Override
 	public String toString() {
 		return "Appointment [appointmentId=" + appointmentId + ", time=" + time + ", status=" + status

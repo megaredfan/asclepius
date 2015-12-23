@@ -8,10 +8,10 @@ public class AutoAppointment {
 	private String day;
 	private String time;
 	private int amount;
+	private double cost;
 	
 	public AutoAppointment(){}
 
-	
 	public long getId() {
 		return id;
 	}
@@ -55,11 +55,19 @@ public class AutoAppointment {
 		this.amount = amount;
 	}
 
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
 
 	@Override
 	public String toString() {
 		return "AutoAppointment [id=" + id + ", hospitalId=" + hospitalId + ", departmentId=" + departmentId
-				+ ", doctorId=" + doctorId + ", day=" + day + ", time=" + time + ", amount=" + amount + "]";
+				+ ", doctorId=" + doctorId + ", day=" + day + ", time=" + time + ", amount=" + amount + ", cost=" + cost
+				+ "]";
 	}
 	
 }

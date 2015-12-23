@@ -11,16 +11,17 @@
 		<result property="day" column="day" />
 		<result property="time" column="time" />
  		<result property="amount" column="amount" />
+ 		<result property="cost" column="cost" />
 	</resultMap>
 	<insert id="create" parameterType="buaa.bp.asclepius.model.AutoAppointment">
 	    <![CDATA[
-	    	insert into appointmentpool(id,hospitalid,departmentid,doctorid,day,time,amount)
-	    		values(#{id},#{hospitalId},#{departmentId},#{doctorId},#{day},#{time},#{amount});
+	    	insert into appointmentpool(id,hospitalid,departmentid,doctorid,day,time,amount,cost)
+	    		values(#{id},#{hospitalId},#{departmentId},#{doctorId},#{day},#{time},#{amount},#{cost});
 		]]>
 	</insert>
 	<update id="update" parameterType="buaa.bp.asclepius.model.AutoAppointment">
 		<![CDATA[
-	    	update appointmentpool set hospitalid=#{hospitalId},departmentid=#{departmentId},doctorid=#{doctorId},day=#{day},time=#{time},amount=#{amount}
+	    	update appointmentpool set hospitalid=#{hospitalId},departmentid=#{departmentId},doctorid=#{doctorId},day=#{day},time=#{time},amount=#{amount},cost=#{cost}
 	    		where id=#{id};
 		]]>
 	</update>

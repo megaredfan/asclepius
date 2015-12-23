@@ -11,7 +11,7 @@
 	</resultMap>
 	<select id="getAllCredits" parameterType="long" resultMap="creditMap">
 	    <![CDATA[
-	    	select * from credit where creditid = #{creditid};
+	    	select * from credit where userid = #{userId};
 		]]>
 	</select>
 	<select id="getCreditById" resultMap="creditMap">

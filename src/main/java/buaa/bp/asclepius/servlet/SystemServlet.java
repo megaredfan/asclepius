@@ -77,6 +77,8 @@ public class SystemServlet {
 		}
 		if(appointment.getStatus()==Appointment.WAITING_FOR_PRINTING&&
 				!appointmentDetail.getDate().before(new Date(System.currentTimeMillis()))){
+			appointment.setStatus(Appointment.PRINTED);
+			appointmentService.updateAppointment(appointment);
 			m = new ModelAndView(status);
 			m.addObject("doctor",doctor.getName());
 			m.addObject("department",department.getDepartmentName());

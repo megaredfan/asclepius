@@ -7,6 +7,7 @@ public class Credit {
 	private String description;
 	private Timestamp createTime;
 	private long userId;
+	private long appointmentId;
 	
 	public long getCreditId() {
 		return creditId;
@@ -33,10 +34,16 @@ public class Credit {
 		this.userId = userId;
 	}
 	
+	public long getAppointmentId() {
+		return appointmentId;
+	}
+	public void setAppointmentId(long appointmentId) {
+		this.appointmentId = appointmentId;
+	}
 	@Override
 	public String toString() {
 		return "Credit [creditId=" + creditId + ", description=" + description + ", createTime=" + createTime
-				+ ", userId=" + userId + "]";
+				+ ", userId=" + userId + ", appointmentId=" + appointmentId + "]";
 	}
 	
 	
