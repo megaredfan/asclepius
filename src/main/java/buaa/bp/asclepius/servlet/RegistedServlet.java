@@ -401,11 +401,16 @@ public class RegistedServlet {
 			response.sendRedirect("myAccount.html");
 			return;
 		}
+		
+		app.setStatus(Appointment.WAITING_FOR_PRINTING);
+		appointmentService.updateAppointment(app);
+		
 		pay.setAppointmentId(appointmentId);
 		pay.setUserId(userId);
 		pay.setCost(appdetail.getCost());
 		pay.setDate(new Timestamp(System.currentTimeMillis()));
 		paymentService.createPayment(pay);
+		
 		response.sendRedirect("myAccount.html");
 		return;
 	}

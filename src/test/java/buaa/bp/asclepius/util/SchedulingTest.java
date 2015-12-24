@@ -25,6 +25,7 @@ public class SchedulingTest {
 	public void test() throws ConfigurationException{
 		PropertiesConfiguration conf = new PropertiesConfiguration("config.properties");
 		int capacity = conf.getInt("defaultCapacity");
+		double cost = conf.getDouble("defaultCost");
 		
 		for(Doctor d : doctorService.getAllDoctors()){
 			AutoAppointment app = new AutoAppointment();
@@ -52,6 +53,7 @@ public class SchedulingTest {
 				app.setAmount(capacity);
 				app.setTime("morning");
 				app.setId(UUID11.getRandomId());
+				app.setCost(cost);
 				if(appointmentDetailService.selectByConditions(app.getHospitalId(), app.getDepartmentId(), app.getDoctorId(), app.getDay(), app.getTime())==null)
 				{
 					try{
@@ -85,22 +87,23 @@ public class SchedulingTest {
 			a.setDeptId(autoapp.getDepartmentId());
 			a.setDoctorId(autoapp.getDoctorId());
 			a.setTime(autoapp.getTime());
+			a.setCost(autoapp.getCost());
 			
 			switch(autoapp.getDay()){
 			case "mon":
-				calendar.add(Calendar.DAY_OF_MONTH, 1);
+				calendar.add(Calendar.DAY_OF_MONTH, 5);
 				break;
 			case "tue":
-				calendar.add(Calendar.DAY_OF_MONTH, 2);
+				calendar.add(Calendar.DAY_OF_MONTH, 6);
 				break;
 			case "wed":
-				calendar.add(Calendar.DAY_OF_MONTH, 3);
+				calendar.add(Calendar.DAY_OF_MONTH, 7);
 				break;
 			case "thur":
-				calendar.add(Calendar.DAY_OF_MONTH, 4);
+				calendar.add(Calendar.DAY_OF_MONTH, 8);
 				break;
 			case "fri":
-				calendar.add(Calendar.DAY_OF_MONTH, 5);
+				calendar.add(Calendar.DAY_OF_MONTH, 9);
 				break;
 			}
 			Date date = new Date(calendar.getTimeInMillis());

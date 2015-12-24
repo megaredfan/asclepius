@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50625
 File Encoding         : 65001
 
-Date: 2015-11-26 12:53:39
+Date: 2015-12-23 21:39:08
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,10 +24,10 @@ CREATE TABLE `appdetail` (
   `hospitalid` bigint(11) DEFAULT NULL,
   `deptid` bigint(11) DEFAULT NULL,
   `doctorid` bigint(11) DEFAULT NULL,
-  `start` datetime DEFAULT NULL,
-  `end` datetime DEFAULT NULL,
   `amount` int(11) DEFAULT NULL,
-  `date` datetime DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `time` varchar(22) DEFAULT NULL,
+  `cost` float(10,2) DEFAULT '1.00',
   PRIMARY KEY (`appdetailid`),
   KEY `hospitalid` (`hospitalid`),
   KEY `deptid` (`deptid`),
@@ -42,14 +42,31 @@ CREATE TABLE `appointment` (
   `userid` bigint(11) DEFAULT NULL,
   `appointmentid` bigint(11) NOT NULL,
   `time` datetime DEFAULT NULL,
-  `status` int(1) DEFAULT NULL,
+  `status` int(1) DEFAULT '1',
   `patientname` varchar(255) DEFAULT NULL,
   `patientsex` varchar(10) DEFAULT NULL,
   `patientage` int(3) DEFAULT NULL,
   `patientinsno` varchar(255) DEFAULT NULL,
+  `cost` float(10,2) DEFAULT '0.00',
   `appdetailid` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`appointmentid`),
   KEY `userid` (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for appointmentpool
+-- ----------------------------
+DROP TABLE IF EXISTS `appointmentpool`;
+CREATE TABLE `appointmentpool` (
+  `id` bigint(11) NOT NULL,
+  `hospitalid` bigint(11) DEFAULT NULL,
+  `departmentid` bigint(11) DEFAULT NULL,
+  `doctorid` bigint(11) DEFAULT NULL,
+  `day` varchar(10) DEFAULT NULL,
+  `time` varchar(20) DEFAULT NULL,
+  `amount` int(5) DEFAULT NULL,
+  `cost` float(10,2) DEFAULT '1.00',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -120,6 +137,19 @@ CREATE TABLE `message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for payment
+-- ----------------------------
+DROP TABLE IF EXISTS `payment`;
+CREATE TABLE `payment` (
+  `paymentid` bigint(11) NOT NULL,
+  `cost` float(10,2) DEFAULT NULL,
+  `userid` bigint(11) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `appointmentid` bigint(11) DEFAULT NULL,
+  PRIMARY KEY (`paymentid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for sysadmin
 -- ----------------------------
 DROP TABLE IF EXISTS `sysadmin`;
@@ -145,6 +175,11 @@ CREATE TABLE `user` (
   `realname` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   `creditlevel` int(11) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `validatecode` varchar(1024) DEFAULT NULL,
+  `activeflag` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into sysadmin(adminid,password,adminname) values(12345678910,'4QrcOUm6Wau+VuBX8g+IPg==','admin');
